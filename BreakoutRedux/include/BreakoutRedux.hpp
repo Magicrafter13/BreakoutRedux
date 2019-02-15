@@ -6,7 +6,7 @@
 #include <iostream>
 #include <ostream>
 #include <vector>
-#define _USE_MATH_DEFINES
+//#define _USE_MATH_DEFINES
 #include <cmath>
 #include <3ds.h>
 #include <citro3d.h>
@@ -43,5 +43,7 @@ extern void DrawTexture(C2D_Image image, float x, float y);
 #define ASep ";"
 #define CEnd "m"
 #define PEnd "H"
+
+#define PI 3.14159265358979323846
 
 #define GetImage C2D_SpriteSheetGetImage

@@ -146,6 +146,10 @@ int main(int argc, char **argv) {
 				GameState = PreviousGameState;
 			 	PreviousGameState = "game";
 			}
+			for (Ball *ball : CurGame->GetBalls()) {
+				if (kDown & KEY_LEFT) ball->AddDegree(-50);
+				if (kDown & KEY_RIGHT) ball->AddDegree(50);
+			}
 			//rest of game code happens
 
 			//set ball trails, unless this is implemented inside the ball class
@@ -160,8 +164,22 @@ int main(int argc, char **argv) {
 			}
 			CurGame->GetPaddle()->Draw();
 			//for each ball, for (int i = 7; i > 0; i--) draw-scaled extra ball[i], end loop, draw ball
-			for (Ball ball : *(CurGame->GetBalls())) {
-				ball.Draw();
+			for (Ball *ball : CurGame->GetBalls()) {
+				ball->Draw();
+				std::vector<float> range = ball->Range();
+				std::vector<float> coords = ball->GetCoords();
+				float slope = ball->Slope();
+				//x = (y - y1)/m + x1
+				//y = m(x - x1) + y1
+				if (slope < 1.0f && slope > -1.0f) {
+					for (int x = (int)round(range[0]); x < (int)round(range[1]); x++) {
+						DrawTexture(GetImage(spriteSheet, sprites_cyan_idx), (float)x, ball->Slope() * ((float)x - coords[0]) + coords[1]);
+					}
+				} else {
+					for (int y = (int)round(range[2]); y < (int)round(range[3]); y++) {
+						DrawTexture(GetImage(spriteSheet, sprites_cyan_idx), ((float)y - coords[1]) / ball->Slope() + coords[0], (float)y);
+					}
+				}
 			}
 			//[original code] pp2d_draw_texture_scale(extraBallID[i], (tBall.trail_new_frame_circle[i].x - tBall.trail_new_frame_circle[i].rad) + 1.0, (tBall.trail_new_frame_circle[i].y - tBall.trail_new_frame_circle[i].rad) + 2.0, (7 - i) / 8.0, (7 - i) / 8.0); //RGBA8(0xFF, 0xFF, 0xFF, 32 * (7 - i))
 			C3D_FrameEnd(0);

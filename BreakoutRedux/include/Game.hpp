@@ -8,7 +8,7 @@ class Game {
 	Player player;
 	std::vector<Brick> *bricks;
 	Paddle *paddle = new Paddle(175.0f, 215.0f, 50.0f, 10.0f);
-	std::vector<Ball> *balls;
+	std::vector<Ball*> balls;
 	int level;
 	bool customLevel;
 
@@ -16,8 +16,8 @@ class Game {
 		bricks = GetLevelBricks(level);
 	}
 	void ResetBalls() {
-		balls = new std::vector<Ball>;
-		balls->push_back(Ball(200.0f, 200.0f, 7.0f));
+		balls = std::vector<Ball*>();
+		balls.push_back(new Ball(200.0f, 200.0f, 7.0f));
 	}
 public:
 	std::vector<Brick> *GetBricks() {
@@ -26,7 +26,7 @@ public:
 	Paddle *GetPaddle() {
 		return paddle;
 	}
-	std::vector<Ball> *GetBalls() {
+	std::vector<Ball*> GetBalls() {
 		return balls;
 	}
 	void Reset() {
