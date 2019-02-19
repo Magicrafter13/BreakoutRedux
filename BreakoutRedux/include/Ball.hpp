@@ -10,7 +10,7 @@ public:
 	}
 	void AddDegree(int inc) {
 		degree += inc;
-		if (degree > 3600) degree -= 3600;
+		if (degree >= 3600) degree -= 3600;
 		if (degree < 0) degree += 3600;
 	}
 	int TravelQuadrant() {
@@ -49,21 +49,47 @@ public:
 		std::vector<float> range = Range();
 		std::vector<float> coords = GetCoords();
 		float slope = Slope();
+		/*if (slope * (0.0f - coords[0]) + coords[1] < 0 || slope * (400.0f - coords[0]) + coords[1] < 0 && range[3] < 240.0f) {
+			C2D_DrawEllipse(((float)y - coords[1]) / slope + coords[0] - radius, 0.0f, 0.0f, radius * 2.0f, radius * 2.0f, C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF));
+			C2D_DrawEllipse(((float)y - coords[1]) / slope + coords[0] - radius + 1.0f, 1.0f, 0.0f, radius * 2.0f - 2.0f, radius * 2.0f - 2.0f, C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF));
+		}*/
 		//x = (y - y1)/m + x1
 		//y = m(x - x1) + y1
 		if (slope < 1.0f && slope > -1.0f) {
-			for (int x = (int)round(range[0]); x < (int)round(range[1]); x++) {
-				float y = slope * ((float)x - coords[0]) + coords[1];
-				DrawTexture(GetImage(spriteSheet, sprites_cyan_idx), (float)x, y);
-				DrawTexture(GetImage(spriteSheet, sprites_green_idx), (float)x + (float)cos((double)(degree - 900) * (PI / 1800.0)) * radius, y + (float)sin((double)(degree - 900) * (PI / 1800.0)) * radius);
-				DrawTexture(GetImage(spriteSheet, sprites_green_idx), (float)x + (float)cos((double)(degree + 900) * (PI / 1800.0)) * radius, y + (float)sin((double)(degree + 900) * (PI / 1800.0)) * radius);
+			for (int drawX = (int)round(range[0]); drawX < (int)round(range[1]); drawX++) {
+				float drawY = slope * ((float)drawX - coords[0]) + coords[1];
+				if (TravelQuadrant() == 1 || TravelQuadrant() == 4) {
+					if (drawX == (int)round(400.0f - radius)) {
+						C2D_DrawEllipse((float)drawX - radius, drawY - radius, 0.0f, radius * 2.0f, radius * 2.0f, C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF));
+						C2D_DrawEllipse((float)drawX - radius + 1.0f, drawY - radius + 1.0f, 0.0f, radius * 2.0f - 2.0f, radius * 2.0f - 2.0f, C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF));
+					}
+				} else {
+					if (drawX == (int)round(0.0f + radius)) {
+						C2D_DrawEllipse((float)drawX - radius, drawY - radius, 0.0f, radius * 2.0f, radius * 2.0f, C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF));
+						C2D_DrawEllipse((float)drawX - radius + 1.0f, drawY - radius + 1.0f, 0.0f, radius * 2.0f - 2.0f, radius * 2.0f - 2.0f, C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF));
+					}
+				}
+				DrawTexture(GetImage(spriteSheet, sprites_cyan_idx), (float)drawX, drawY);
+				DrawTexture(GetImage(spriteSheet, sprites_green_idx), (float)drawX + (float)cos((double)(degree - 900) * (PI / 1800.0)) * radius, drawY + (float)sin((double)(degree - 900) * (PI / 1800.0)) * radius);
+				DrawTexture(GetImage(spriteSheet, sprites_green_idx), (float)drawX + (float)cos((double)(degree + 900) * (PI / 1800.0)) * radius, drawY + (float)sin((double)(degree + 900) * (PI / 1800.0)) * radius);
 			}
 		} else {
-			for (int y = (int)round(range[2]); y < (int)round(range[3]); y++) {
-				float x = ((float)y - coords[1]) / slope + coords[0];
-				DrawTexture(GetImage(spriteSheet, sprites_cyan_idx), x, (float)y);
-				DrawTexture(GetImage(spriteSheet, sprites_green_idx), x + (float)cos((double)(degree - 900) * (PI / 1800.0)) * radius, (float)y + (float)sin((double)(degree - 900) * (PI / 1800.0)) * radius);
-				DrawTexture(GetImage(spriteSheet, sprites_green_idx), x + (float)cos((double)(degree + 900) * (PI / 1800.0)) * radius, (float)y + (float)sin((double)(degree + 900) * (PI / 1800.0)) * radius);
+			for (int drawY = (int)round(range[2]); drawY < (int)round(range[3]); drawY++) {
+				float drawX = ((float)drawY - coords[1]) / slope + coords[0];
+				if (TravelQuadrant() == 1 || TravelQuadrant() == 2) {
+					if (drawY == (int)round(240.0f - radius)) {
+						C2D_DrawEllipse(drawX - radius, (float)drawY - radius, 0.0f, radius * 2.0f, radius * 2.0f, C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF));
+						C2D_DrawEllipse(drawX - radius + 1.0f, (float)drawY - radius + 1.0f, 0.0f, radius * 2.0f - 2.0f, radius * 2.0f - 2.0f, C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF));
+					}
+				} else {
+					if (drawY == (int)round(0.0f + radius)) {
+						C2D_DrawEllipse(drawX - radius, (float)drawY - radius, 0.0f, radius * 2.0f, radius * 2.0f, C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF));
+						C2D_DrawEllipse(drawX - radius + 1.0f, (float)drawY - radius + 1.0f, 0.0f, radius * 2.0f - 2.0f, radius * 2.0f - 2.0f, C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF));
+					}
+				}
+				DrawTexture(GetImage(spriteSheet, sprites_cyan_idx), drawX, (float)drawY);
+				DrawTexture(GetImage(spriteSheet, sprites_green_idx), drawX + (float)cos((double)(degree - 900) * (PI / 1800.0)) * radius, (float)drawY + (float)sin((double)(degree - 900) * (PI / 1800.0)) * radius);
+				DrawTexture(GetImage(spriteSheet, sprites_green_idx), drawX + (float)cos((double)(degree + 900) * (PI / 1800.0)) * radius, (float)drawY + (float)sin((double)(degree + 900) * (PI / 1800.0)) * radius);
 			}
 		}
 	}
