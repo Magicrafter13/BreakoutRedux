@@ -5,6 +5,9 @@ class Paddle {
 	float width, height;
 	int size;
 public:
+	bool Inside(float tX, float tY) {
+		return tX >= x && tX <= x + width && tY >= y && tY <= y + height;
+	}
 	void Move(int amount) {
 		x += amount;
 	}

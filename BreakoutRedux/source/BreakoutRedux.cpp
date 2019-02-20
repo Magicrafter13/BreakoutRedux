@@ -153,11 +153,16 @@ int main(int argc, char **argv) {
 				if (kDown & KEY_DOWN) ball->AddDegree(-10);
 				if (kHeld & KEY_L) ball->AddDegree(-5);
 				if (kHeld & KEY_R) ball->AddDegree(5);
+				if (kDown & KEY_X) ball->Up(5); //these should be temporary
+				if (kDown & KEY_B) ball->Up(-5);
 			}
 			if (kHeld & KEY_Y) CurGame->GetPaddle()->Move(-3);
 			if (kHeld & KEY_A) CurGame->GetPaddle()->Move(3);
 			//rest of game code happens
 
+			for (Ball *ball : CurGame->GetBalls()) {
+				ball->Update(CurGame->GetBricks(), *(CurGame->GetPaddle()));
+			}
 			//set ball trails, unless this is implemented inside the ball class
 
 			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
@@ -171,7 +176,6 @@ int main(int argc, char **argv) {
 			CurGame->GetPaddle()->Draw();
 			//for each ball, for (int i = 7; i > 0; i--) draw-scaled extra ball[i], end loop, draw ball
 			for (Ball *ball : CurGame->GetBalls()) {
-				ball->Update(CurGame->GetBricks(), *(CurGame->GetPaddle()));
 				ball->Draw();
 			}
 			//[original code] pp2d_draw_texture_scale(extraBallID[i], (tBall.trail_new_frame_circle[i].x - tBall.trail_new_frame_circle[i].rad) + 1.0, (tBall.trail_new_frame_circle[i].y - tBall.trail_new_frame_circle[i].rad) + 2.0, (7 - i) / 8.0, (7 - i) / 8.0); //RGBA8(0xFF, 0xFF, 0xFF, 32 * (7 - i))
