@@ -149,7 +149,13 @@ int main(int argc, char **argv) {
 			for (Ball *ball : CurGame->GetBalls()) {
 				if (kDown & KEY_LEFT) ball->AddDegree(-50);
 				if (kDown & KEY_RIGHT) ball->AddDegree(50);
+				if (kDown & KEY_UP) ball->AddDegree(10);
+				if (kDown & KEY_DOWN) ball->AddDegree(-10);
+				if (kHeld & KEY_L) ball->AddDegree(-5);
+				if (kHeld & KEY_R) ball->AddDegree(5);
 			}
+			if (kHeld & KEY_Y) CurGame->GetPaddle()->Move(-3);
+			if (kHeld & KEY_A) CurGame->GetPaddle()->Move(3);
 			//rest of game code happens
 
 			//set ball trails, unless this is implemented inside the ball class

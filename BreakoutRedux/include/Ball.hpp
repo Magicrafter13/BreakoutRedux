@@ -78,8 +78,8 @@ public:
 				float drawX = ((float)drawY - coords[1]) / slope + coords[0];
 				if (TravelQuadrant() == 1 || TravelQuadrant() == 2) {
 					if (drawY == (int)round(240.0f - radius)) {
-						C2D_DrawEllipse(drawX - radius, (float)drawY - radius, 0.0f, radius * 2.0f, radius * 2.0f, C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF));
-						C2D_DrawEllipse(drawX - radius + 1.0f, (float)drawY - radius + 1.0f, 0.0f, radius * 2.0f - 2.0f, radius * 2.0f - 2.0f, C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF));
+						//C2D_DrawEllipse(drawX - radius, (float)drawY - radius, 0.0f, radius * 2.0f, radius * 2.0f, C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF));
+						//C2D_DrawEllipse(drawX - radius + 1.0f, (float)drawY - radius + 1.0f, 0.0f, radius * 2.0f - 2.0f, radius * 2.0f - 2.0f, C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF));
 					}
 				} else {
 					if (drawY == (int)round(0.0f + radius)) {
