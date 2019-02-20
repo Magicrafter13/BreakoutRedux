@@ -4,7 +4,13 @@ class Ball {
 	float x, y;
 	float radius;
 	int degree = 3150; //convert like this: degree * (PI / 1800.0)
+	std::vector<Brick> *bricks;
+	Paddle paddle = Paddle(0.0f, 0.0f, 0.0f, 0.0f);
 public:
+	void Update(std::vector<Brick> *sBricks, Paddle sPaddle) {
+		bricks = sBricks;
+		paddle = sPaddle;
+	}
 	int GetDegree() {
 		return degree;
 	}

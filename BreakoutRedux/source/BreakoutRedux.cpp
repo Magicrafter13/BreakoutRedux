@@ -171,6 +171,7 @@ int main(int argc, char **argv) {
 			CurGame->GetPaddle()->Draw();
 			//for each ball, for (int i = 7; i > 0; i--) draw-scaled extra ball[i], end loop, draw ball
 			for (Ball *ball : CurGame->GetBalls()) {
+				ball->Update(CurGame->GetBricks(), *(CurGame->GetPaddle()));
 				ball->Draw();
 			}
 			//[original code] pp2d_draw_texture_scale(extraBallID[i], (tBall.trail_new_frame_circle[i].x - tBall.trail_new_frame_circle[i].rad) + 1.0, (tBall.trail_new_frame_circle[i].y - tBall.trail_new_frame_circle[i].rad) + 2.0, (7 - i) / 8.0, (7 - i) / 8.0); //RGBA8(0xFF, 0xFF, 0xFF, 32 * (7 - i))
