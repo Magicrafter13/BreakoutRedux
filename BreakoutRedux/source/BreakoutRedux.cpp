@@ -91,6 +91,7 @@ int main(int argc, char **argv) {
 	//Main loop
 	while (aptMainLoop()) {
 		hidScanInput();
+		hidTouchRead(&touch);
 		kDown = hidKeysDown();
 		kHeld = hidKeysHeld();
 		if (GameState == "title") {
@@ -134,12 +135,6 @@ int main(int argc, char **argv) {
 			//select main bottom screen console
 			DrawTexture(GetImage(uiSheet, ui_title_idx), 80, 20);
 			C3D_FrameEnd(0);
-
-			hidTouchRead(&touch);
-			if (touchInBox(touch, 0, 224, 320, 16)) {
-				PreviousGameState = GameState;
-				GameState = "exit";
-			}
 		} else if (GameState == "game") {
 			if (kDown & KEY_START /* || lives equal 0 */) /*set return state to 2*/ //create a player class/object
 			{
@@ -160,7 +155,7 @@ int main(int argc, char **argv) {
 			if (kHeld & KEY_A) CurGame->GetPaddle()->Move(3);
 			//rest of game code happens
 
-			for (Ball *ball : CurGame->GetBalls()) {
+			for (Ball* ball : CurGame->GetBalls()) {
 				ball->Update(CurGame->GetBricks(), *(CurGame->GetPaddle()));
 			}
 			//set ball trails, unless this is implemented inside the ball class
@@ -283,6 +278,11 @@ int main(int argc, char **argv) {
 			std::cout << ConsoleColor(GreenF, RedB, false) << "              Build: " << BuildNumber;
 			std::cout << ConsoleColor(GreenF, RedB, false) << "   ISHUPE Engine Version: " << EngineVersion;
 			UpdateText = false;
+		}
+
+		if (touchInBox(touch, 0, 224, 320, 16)) {
+			PreviousGameState = GameState;
+			GameState = "exit";
 		}
 
 		if (GameState == "exit") {
