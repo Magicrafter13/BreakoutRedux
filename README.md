@@ -1,37 +1,48 @@
-## Welcome to GitHub Pages
+# Breakout Redux
+A Breakout clone for the 3DS (Using ctrulib and citro3d/2d)  
+A complete rewrite of my previous attempt: [Breakout](https://github.com/Magicrafter13/Breakout)
 
-You can use the [editor on GitHub](https://github.com/Magicrafter13/BreakoutRedux/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+-Written by Magicrafter13 (Matthew Rease).
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+### Screenshots
 
-### Markdown
+(Pending...)  
+![Screenshot1](/BreakoutLeft.png) ![Screenshot2](/BreakoutRight.png)
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
 
-```markdown
-Syntax highlighted code block
+# Play
 
-# Header 1
-## Header 2
-### Header 3
+(Not in a playable state yet. Check back later!)  
+To play this, just download a precompiled binary (3dsx, cia, or elf) from the releases tab.
 
-- Bulleted
-- List
+## Controls
 
-1. Numbered
-2. List
+#### Current Testing Controls ####  
+* __D-Pad Left/Right__ Subtracts or Adds 5 degrees to the balls angle respectively
+* __D-Pad Up/Down__ Adds or Subtracts 1 degree from the balls angle respectively
+* __L and R__ Subtacts or Adds 0.5 degrees to the balls angle respectively
+* __X and B__ Adds or Subtracts 5 from the balls y coordinate respectively
+* __Y and A__ Moves the paddle left or right respectively
 
-**Bold** and _Italic_ and `Code` text
+#### In - Game ####  
+* __D-Pad__ or Joystick to move Left and Right
+* __A Button__ to launch ball (when ball attached) or shoot laser if power up has been acquired.
+* __Select__ to start game (or return to title)
+* __Y__ to open Level editor
+* __Start__ to exit
 
-[Link](url) and ![Image](src)
-```
+#### In Level Editor ####  
+* __D-Pad__ or __Joystick__ to move cursor
+* __L__ and __R__ to switch brick type
+* __X__ to save level layout
+* __B__ or __Start__ to return to title
+* __Y__ to randomize brick layout
+* __Select__ play your level
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+## "Nightlies"  
+(Not currently available)  
+Available on my website. [Click Here!](http://oldforgeinn.ddns.net/Games/?game=Breakout#download)
 
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Magicrafter13/BreakoutRedux/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+# Edit / self-compile  
+To compile this game, you shouldn't need to install anything extra, as long as you have libctru and citro3d (and citro2d) it should work, if not make sure to tell me.  
+Just go to the BreakoutRedux subfolder and run `make` in the command line.  
