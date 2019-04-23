@@ -45,4 +45,7 @@ Available on my website. [Click Here!](http://oldforgeinn.ddns.net/Games/?game=B
 
 # Edit / self-compile  
 To compile this game, you shouldn't need to install anything extra, as long as you have libctru and citro3d (and citro2d) it should work, if not make sure to tell me.  
+
+Also [bannertool.exe](https://github.com/Steveice10/bannertool/releases) needs to be added to `c:/devkitPro/msys2/opt/bin` on Windows
+
 Just go to the BreakoutRedux subfolder and run `make` in the command line.  
