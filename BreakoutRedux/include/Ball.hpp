@@ -27,22 +27,32 @@ public:
 		for (int drawX = (int)round(range[invert ? 1 : 0]); invert ? (drawX >= (int)round(range[0])) : (drawX <= (int)round(range[1])); drawX += invert ? -1 : 1) {
 			float drawY = slope * ((float)drawX - coords[0]) + coords[1];
 			if (!ghostSet) {
-				for (int angle = degree - 900; angle <= degree + 900 && !ghostSet; angle += 10) {
-					float tX = (float)drawX + (float)cos((double)angle * (PI / 1800.0)) * radius;
-					float tY = drawY + (float)sin((double)angle * (PI / 1800.0)) * radius;
-					if (tX <= 0.0f || tX >= 400.0f || tY <= 0.0f || tY >= 240.0f) setGhost = true;
-					else if (paddle.Inside(tX, tY)) setGhost = true;
-					else {
-						for (Brick brick : *sBricks) {
-							if (brick.Inside(tX, tY)) {
-								setGhost = true;
-								break;
+				bool skip = true;
+				if (paddle.Inside(drawX - radius, drawY - radius, radius * 2, radius * 2)) skip = false;
+				/*for (Brick brick : *sBricks) {
+					if (brick.Inside(drawX - radius, drawY - radius, radius * 2, radius * 2)) {
+						skip = false;
+						break;
+					}
+				}*/
+				if (!skip) {
+					for (int angle = degree - 900; angle <= degree + 900 && !ghostSet; angle += 10) {
+						float tX = (float)drawX + (float)cos((double)angle * (PI / 1800.0)) * radius;
+						float tY = drawY + (float)sin((double)angle * (PI / 1800.0)) * radius;
+						if (tX <= 0.0f || tX >= 400.0f || tY <= 0.0f || tY >= 240.0f) setGhost = true;
+						else if (paddle.Inside(tX, tY)) setGhost = true;
+						else {
+							for (Brick brick : *sBricks) {
+								if (brick.Inside(tX, tY)) {
+									setGhost = true;
+									break;
+								}
 							}
 						}
-					}
-					if (setGhost) {
-						ghostCoords = { (float)drawX - radius, drawY - radius };
-						ghostSet = true;
+						if (setGhost) {
+							ghostCoords = { (float)drawX - radius, drawY - radius };
+							ghostSet = true;
+						}
 					}
 				}
 			}

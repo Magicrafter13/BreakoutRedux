@@ -10,6 +10,10 @@ public:
 		if (tX < x || tX > x + width || tY < y || tY > y + height) return false;
 		return true;
 	}
+	bool Inside(float tX, float tY, float tWidth, float tHeight) {
+		if (tX < x + width && tX + tWidth > x && tY < y + height && tY + tHeight > y) return true;
+		return false;
+	}
 	void Draw() {
 		C2D_DrawRectangle(x, y, 0.0f, width, height, C2D_Color32(0x00, 0x00, 0xFF, 0xFF), C2D_Color32(0x00, 0x00, 0xFF, 0xFF), C2D_Color32(0x00, 0x00, 0xFF, 0xFF), C2D_Color32(0x00, 0x00, 0xFF, 0xFF));
 		C2D_DrawRectangle(x + 1.0f, y + 1.0f, 0.0f, width - 2.0f, height - 2.0f, C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF));

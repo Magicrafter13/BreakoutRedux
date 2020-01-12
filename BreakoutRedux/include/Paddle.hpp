@@ -9,6 +9,10 @@ public:
 		if (tX < x || tX > x + width || tY < y || tY > y + height) return false;
 		return true;
 	}
+	bool Inside(float tX, float tY, float tWidth, float tHeight) {
+		if (tX < x + width && tX + tWidth > x && tY < y + height && tY + tHeight > y) return true;
+		return false;
+	}
 	void Move(int amount) {
 		x += amount;
 	}

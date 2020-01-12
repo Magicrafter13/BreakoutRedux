@@ -12,18 +12,18 @@ C2D_SpriteSheet powerupSheet;
 
 PrintConsole bottomScreen, versionWin, killBox, debugBox;
 
-std::string VersionText = "  Beta ", VersionNumber = "01.07.02";
-std::string BuildNumber = "18.04.22.1228", EngineVersion = "01.00.00";
+const std::string VersionText = "  Beta ", VersionNumber = "01.07.02";
+const std::string BuildNumber = "18.04.22.1228", EngineVersion = "01.00.00";
 
 std::string ConsoleMove(int x, int y) {
 	return std::string(ANSI) + std::string(y + ";" + x) + std::string(PEnd);
 }
 
-std::string ConsoleColor(std::string foreground, bool bright) {
+std::string ConsoleColor(const std::string& foreground, bool bright) {
 	return std::string (ANSI) + foreground + (bright ? ";2" : "") + std::string(CEnd);
 }
 
-std::string ConsoleColor(std::string foreground, std::string background, bool bright) {
+std::string ConsoleColor(const std::string& foreground, const std::string& background, bool bright) {
 	return std::string(ANSI) + foreground + ";" + background + (bright ? ";2" : "") + std::string(CEnd);
 }
 
