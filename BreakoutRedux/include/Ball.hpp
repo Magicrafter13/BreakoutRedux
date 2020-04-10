@@ -35,15 +35,29 @@ public:
 		for (Brick* brick : bricks) {
 			if (brick->Exists()) {
 				std::vector<float> tC = brick->Coords();
-				if (!(tC[0] + tC[2] < x - radius - 1.0f || tC[1] + tC[3] < y - radius - 1.0f || tC[0] > x + radius + 1.0f || tC[1] > y + radius + 1.0f))
+				if (!(tC[0] + tC[2] < x - radius - speed / 100.0f || tC[1] + tC[3] < y - radius - speed / 100.0f || tC[0] > x + radius + 1.0f || tC[1] > y + radius + speed / 100.0f))
 					toCheck.push_back(brick);
 			}
 		}
 		bool checkPaddle = y > 194;
-		for (float distance = 0.1f; distance < 1.2f && !collision; distance += 0.2f) {
+		for (float distance = 0.1f; distance < speed / 100.0f && !collision; distance += 0.2f) {
 			float drawX = x + dX * distance;
 			float drawY = y + dY * distance;
-			for (int angle = degree - 900; angle <= degree + 900 && !collision; angle += 10) {
+			// instead of going from -900 to 900 (relative) start with 0 then add 1, subtract 2, add 3, subtract 4, etc
+			int change = 0;
+			int step = 0;
+			for (int angle = degree; angle < degree + 901 && !collision; angle += (change % 2 == 0 ? change * -1 : change) * 10) {
+				switch (step) {
+				case 0:
+					angle = (TravelQuadrant() - 1) * 900;
+					break;
+				case 1:
+					angle = TravelQuadrant() * 900;
+					break;
+				default:
+					change++;
+				}
+				step++;
 				float tX = drawX + cos((float)angle * (float)PI / 1800.0f) * radius;
 				float tY = drawY + sin((float)angle * (float)PI / 1800.0f) * radius;
 				if (tX <= 0 || tX >= 400 || tY <= 0) {
@@ -77,6 +91,8 @@ public:
 					AddDegree(angle + 1800 + difference - degree);
 					x -= error[0];
 					y -= error[1];
+					std::cout << "Collision at " << angle << ".\n";
+					if (step < 3) std::cout << "Step " << step << "\n";
 				}
 			}
 		}
