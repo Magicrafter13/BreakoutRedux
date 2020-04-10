@@ -12,17 +12,17 @@ A complete rewrite of my previous attempt: [Breakout](https://github.com/Magicra
 
 # Play
 
-(Not in a playable state yet. Check back later!)  
+Barely in a playable state (still in Alpha), however press start on the title screen to begin, then press select to launch the ball. Use Left/Right to move the paddle.  
 To play this, just download a precompiled binary (3dsx, cia, or elf) from the releases tab.
 
 ## Controls
 
 #### Current Testing Controls ####  
-* __D-Pad Left/Right__ Subtracts or Adds 5 degrees to the balls angle respectively
-* __D-Pad Up/Down__ Adds or Subtracts 1 degree from the balls angle respectively
-* __L and R__ Subtacts or Adds 0.5 degrees to the balls angle respectively
-* __X and B__ Adds or Subtracts 5 from the balls y coordinate respectively
-* __Y and A__ Moves the paddle left or right respectively
+* __D-Pad Left/Right__ (Hold) Moves the paddle left or right, respectively
+* __D-Pad Up/Down__ Adds or Subtracts 1 degree from the ball's angle, respectively
+* __L and R__ (Hold) Subtacts or Adds 0.5 degrees to the ball's angle, respectively
+* __X and B__ Adds or Subtracts 5 from the ball's y coordinate, respectively
+* __Y and A__ Subtracts or Adds 5 degrees to the ball's angle, respectively
 
 #### In - Game ####  
 * __D-Pad__ or Joystick to move Left and Right
@@ -41,11 +41,11 @@ To play this, just download a precompiled binary (3dsx, cia, or elf) from the re
 
 ## "Nightlies"  
 (Not currently available)  
-Available on my website. [Click Here!](http://oldforgeinn.ddns.net/Games/?game=Breakout#download)
+Available on my website. [Click Here!](https://oldforgeinn.ddns.net/)
 
 # Edit / self-compile  
 To compile this game, you shouldn't need to install anything extra, as long as you have libctru and citro3d (and citro2d) it should work, if not make sure to tell me.  
 
-Also [bannertool.exe](https://github.com/Steveice10/bannertool/releases) needs to be added to `c:/devkitPro/msys2/opt/bin` on Windows
+You will also need [bannertool.exe](https://github.com/Steveice10/bannertool/releases). Either place it in `<this_repo>\BreakoutRedux`, or place it somewhere in your command `PATH`. (Windows)
 
 Just go to the BreakoutRedux subfolder and run `make` in the command line.  
