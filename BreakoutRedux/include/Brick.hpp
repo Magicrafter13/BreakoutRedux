@@ -6,31 +6,19 @@ class Brick {
 	int type;
 	int health;
 public:
+	std::vector<float> Coords() {
+		return std::vector<float>{ x, y, width, height };
+	}
 	bool Inside(float tX, float tY) {
 		if (tX < x || tX > x + width || tY < y || tY > y + height) return false;
 		return true;
 	}
+	std::vector<float> Error(float tX, float tY) {
+		return std::vector<float> { tX < x + width / 2.0f ? tX - x : tX - x - width, tY < y + height / 2.0f ? tY - y : tY - y - height };
+	}
 	void Draw() {
 		C2D_DrawRectangle(x, y, 0.0f, width, height, C2D_Color32(0x00, 0x00, 0xFF, 0xFF), C2D_Color32(0x00, 0x00, 0xFF, 0xFF), C2D_Color32(0x00, 0x00, 0xFF, 0xFF), C2D_Color32(0x00, 0x00, 0xFF, 0xFF));
 		C2D_DrawRectangle(x + 1.0f, y + 1.0f, 0.0f, width - 2.0f, height - 2.0f, C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF));
-		/*for (int drawY = 0; drawY <= (int)height; drawY += (int)height) {
-			for (int drawX = 0; drawX <= (int)width; drawX++) {
-				DrawTexture(GetImage(spriteSheet, sprites_blue_idx), (float)drawX + x, (float)drawY + y);
-				//C2D_DrawRectangle((float)drawX + x, (float)drawY + y, 0.0f, 1.0f, 1.0f, C2D_Color32(0x00, 0x00, 0xFF, 0xFF), C2D_Color32(0x00, 0x00, 0xFF, 0xFF), C2D_Color32(0x00, 0x00, 0xFF, 0xFF), C2D_Color32(0x00, 0x00, 0xFF, 0xFF));
-			}
-		}
-		for (int drawX = 0; drawX <= (int)width; drawX += (int)width) {
-			for (int drawY = 0; drawY <= (int)height; drawY++) {
-				DrawTexture(GetImage(spriteSheet, sprites_blue_idx), (float)drawX + x, (float)drawY + y);
-				//C2D_DrawRectangle((float)drawX + x, (float)drawY + y, 0.0f, 1.0f, 1.0f, C2D_Color32(0x00, 0x00, 0xFF, 0xFF), C2D_Color32(0x00, 0x00, 0xFF, 0xFF), C2D_Color32(0x00, 0x00, 0xFF, 0xFF), C2D_Color32(0x00, 0x00, 0xFF, 0xFF));
-			}
-		}*/
-		//C2D_DrawRectangle(x, y, 0.0f, width, height, C2D_Color32(0x00, 0x00, 0xFF, 0xFF), C2D_Color32(0x00, 0x00, 0xFF, 0xFF), C2D_Color32(0x00, 0x00, 0xFF, 0xFF), C2D_Color32(0x00, 0x00, 0xFF, 0xFF));
-		/*C2D_DrawTriangle(x, y, C2D_Color32(0xFF, 0xFF, 0x00, 0xFF), x + width, y, C2D_Color32(0xFF, 0xFF, 0x00, 0xFF), x + (width / 2.0f), y + 1.0f, C2D_Color32(0xFF, 0xFF, 0x00, 0xFF), 0.0f);
-		C2D_DrawTriangle(x, y, C2D_Color32(0xFF, 0xFF, 0x00, 0xFF), x, y + height, C2D_Color32(0xFF, 0xFF, 0x00, 0xFF), x + 1.0f, y + (height / 2.0f), C2D_Color32(0xFF, 0xFF, 0x00, 0xFF), 0.0f);
-		C2D_DrawTriangle(x + width, y + height, C2D_Color32(0xFF, 0xFF, 0x00, 0xFF), x + width, y, C2D_Color32(0xFF, 0xFF, 0x00, 0xFF), x - 1.0f + width, y + (height / 2.0f), C2D_Color32(0xFF, 0xFF, 0x00, 0xFF), 0.0f);
-		C2D_DrawTriangle(x + width, y + height, C2D_Color32(0xFF, 0xFF, 0x00, 0xFF), x, y + height, C2D_Color32(0xFF, 0xFF, 0x00, 0xFF), x + (width / 2.0f), y - 1.0f + height, C2D_Color32(0xFF, 0xFF, 0x00, 0xFF), 0.0f);*/
-		//DrawTexture(GetImage(spriteSheet, sprites_FFFFFF_1_idx), x, y, 0.0f, C2D_ImageTint(C2D_Tint {, 255, 0, 255), 1.0f, height);
 		return;
 		//above is temp
 		if (type == 0 || health == 0) return;
@@ -72,8 +60,11 @@ public:
 			break;
 		}
 	}
-	bool exists() {
+	bool Exists() {
 		return health > 0;
+	}
+	void Hit() {
+		health--;
 	}
 	Brick(float sX, float sY, float sWidth, float sHeight, int sType) {
 		x = sX;
@@ -87,5 +78,8 @@ public:
 			health = 2;
 		else
 			health = 0;
+	}
+	bool operator==(const Brick& other) {
+		return x == other.x && y == other.y && width == other.width && height == other.height && type == other.type && health == other.health;
 	}
 };

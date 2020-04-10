@@ -12,36 +12,18 @@ C2D_SpriteSheet powerupSheet;
 
 PrintConsole bottomScreen, versionWin, killBox, debugBox;
 
-std::string VersionText = "  Beta ", VersionNumber = "01.07.02";
-std::string BuildNumber = "18.04.22.1228", EngineVersion = "01.00.00";
+std::string VersionText = " Alpha ", VersionNumber = "01.00.00";
+std::string BuildNumber = "20.04.10.0000", EngineVersion = "01.00.00";
 
-std::string ConsoleMove(int x, int y) {
-	return std::string(ANSI) + std::string(y + ";" + x) + std::string(PEnd);
-}
+std::string ConsoleMove(int x, int y);
+std::string ConsoleColor(std::string foreground, bool bright);
+std::string ConsoleColor(std::string foreground, std::string background, bool bright);
 
-std::string ConsoleColor(std::string foreground, bool bright) {
-	return std::string (ANSI) + foreground + (bright ? ";2" : "") + std::string(CEnd);
-}
+bool touchInBox(touchPosition touch, int x, int y, int w, int h);
 
-std::string ConsoleColor(std::string foreground, std::string background, bool bright) {
-	return std::string(ANSI) + foreground + ";" + background + (bright ? ";2" : "") + std::string(CEnd);
-}
-
-bool touchInBox(touchPosition touch, int x, int y, int w, int h) {
-	return (kDown & KEY_TOUCH && touch.px > x && touch.px < x + w && touch.py > y && touch.py < y + h);
-}
-
-void DrawTexture(C2D_Image image, float x, float y, float rotation, C2D_ImageTint* tint, float scaleX, float scaleY) {
-	C2D_DrawImageAtRotated(image, x, y, 1.0f, rotation, tint, scaleX, scaleY);
-}
-
-void DrawTexture(C2D_Image image, float x, float y, float scaleX, float scaleY) {
-	C2D_DrawImageAt(image, x, y, 1.0f, NULL, scaleX, scaleY);
-}
-
-void DrawTexture(C2D_Image image, float x, float y) {
-	DrawTexture(image, x, y, 1.0f, 1.0f);
-}
+void DrawTexture(C2D_Image image, float x, float y, float rotation, C2D_ImageTint* tint, float scaleX, float scaleY);
+void DrawTexture(C2D_Image image, float x, float y, float scaleX, float scaleY);
+void DrawTexture(C2D_Image image, float x, float y);
 
 //Application
 int main(int argc, char **argv) {
@@ -60,7 +42,8 @@ int main(int argc, char **argv) {
 	uiSheet = C2D_SpriteSheetLoad("romfs:/gfx/ui.t3x");
 	spriteSheet = C2D_SpriteSheetLoad("romfs:/gfx/sprites.t3x");
 	powerupSheet = C2D_SpriteSheetLoad("romfs:/gfx/powerups.t3x");
-	if (!uiSheet || !spriteSheet || !powerupSheet) svcBreak(USERBREAK_PANIC);
+	if (!uiSheet || !spriteSheet || !powerupSheet)
+		svcBreak(USERBREAK_PANIC);
 
 	//check if custom level files exist, if not, create them
 	//load custom level files
@@ -69,8 +52,10 @@ int main(int argc, char **argv) {
 
 	srand(time(NULL));
 
-	consoleInit(GFX_BOTTOM, &bottomScreen); consoleInit(GFX_BOTTOM, &versionWin);
-	consoleInit(GFX_BOTTOM, &killBox); consoleInit(GFX_BOTTOM, &debugBox);
+	consoleInit(GFX_BOTTOM, &bottomScreen);
+	consoleInit(GFX_BOTTOM, &versionWin);
+	consoleInit(GFX_BOTTOM, &killBox);
+	consoleInit(GFX_BOTTOM, &debugBox);
 
 	consoleSetWindow(&versionWin, 6, 26, 34, 4);
 	consoleSetWindow(&killBox, 0, 28, 40, 2);
@@ -78,13 +63,14 @@ int main(int argc, char **argv) {
 
 	//create paddle and ball objects (create classes for them first)
 
-	std::string GameState = "title";
-	std::string PreviousGameState = "title";
+	std::string GameState = "title", PreviousGameState = "title";
 	bool OdsMode = false;
 	bool UpdateText = true, UpdateTextThanks = false;
 	int CurPlayer = 0;
 	Game *CurGame;
 	Game Games[1] = { Game() };
+
+	int frame = 0;
 
 	//read settings file if it exists, otherwise write it, also update it if applicable
 
@@ -98,15 +84,6 @@ int main(int argc, char **argv) {
 			if (kDown & KEY_START) {
 				Games[0] = Game();
 				CurGame = &Games[0];
-				//resetBalls(the_ball);
-				//the_paddle.reset();
-				//setNewBallAngle(the_ball[0].angle);
-				/*for (int i = 0; i < def_level_count; i++)
-					for (int j = 0; j < 50; j++)
-						brick_array[i][j].reset();
-				level = 1; points = 0; last_power = 0;
-				times_power_1 = 0; times_power_2 = 0; times_power_3 = 0;
-				the_ball[0].is_attached = true;*/
 				PreviousGameState = GameState;
 				GameState = "game";
 				UpdateText = true;
@@ -135,15 +112,23 @@ int main(int argc, char **argv) {
 			//select main bottom screen console
 			DrawTexture(GetImage(uiSheet, ui_title_idx), 80, 20);
 			C3D_FrameEnd(0);
-		} else if (GameState == "game") {
-			if (kDown & KEY_START /* || lives equal 0 */) /*set return state to 2*/ //create a player class/object
-			{
+			frame++;
+		}
+		else if (GameState == "game") {
+			// Handle Controls
+			if (kDown & KEY_START || (frame % 20 == 19 && CurGame->Lives() == 0)) {
 				GameState = PreviousGameState;
 			 	PreviousGameState = "game";
 			}
+			if (kDown & KEY_SELECT) // change to A upon release
+				CurGame->Shoot();
+			if (kHeld & KEY_LEFT)
+				CurGame->MovePaddle(-3);
+			if (kHeld & KEY_RIGHT)
+				CurGame->MovePaddle(3);
 			for (Ball *ball : CurGame->GetBalls()) {
-				if (kDown & KEY_LEFT) ball->AddDegree(-50);
-				if (kDown & KEY_RIGHT) ball->AddDegree(50);
+				if (kDown & KEY_Y) ball->AddDegree(-50);
+				if (kDown & KEY_A) ball->AddDegree(50);
 				if (kDown & KEY_UP) ball->AddDegree(10);
 				if (kDown & KEY_DOWN) ball->AddDegree(-10);
 				if (kHeld & KEY_L) ball->AddDegree(-5);
@@ -151,32 +136,18 @@ int main(int argc, char **argv) {
 				if (kDown & KEY_X) ball->Up(5); //these should be temporary
 				if (kDown & KEY_B) ball->Up(-5);
 			}
-			if (kHeld & KEY_Y) CurGame->GetPaddle()->Move(-3);
-			if (kHeld & KEY_A) CurGame->GetPaddle()->Move(3);
-			//rest of game code happens
-
-			for (Ball* ball : CurGame->GetBalls()) {
-				ball->Update(CurGame->GetBricks(), *(CurGame->GetPaddle()));
-			}
-			//set ball trails, unless this is implemented inside the ball class
-
+			// Run Game Logic
+			CurGame->Move();
+			// Update the Screen
 			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 			C2D_TargetClear(top, C2D_Color32f(0.585f, 0.585f, 0.585f, 1.0f));
 			C2D_SceneBegin(top);
-			//for each powerup, move add one to its y position
-			//if powerup is off screen, remove it from the arraylist of onscreen powerups
-			for (Brick brick : *(CurGame->GetBricks())) {
-				if (brick.exists()) brick.Draw();
-			}
-			CurGame->GetPaddle()->Draw();
-			//for each ball, for (int i = 7; i > 0; i--) draw-scaled extra ball[i], end loop, draw ball
-			for (Ball *ball : CurGame->GetBalls()) {
-				ball->Draw();
-			}
-			//[original code] pp2d_draw_texture_scale(extraBallID[i], (tBall.trail_new_frame_circle[i].x - tBall.trail_new_frame_circle[i].rad) + 1.0, (tBall.trail_new_frame_circle[i].y - tBall.trail_new_frame_circle[i].rad) + 2.0, (7 - i) / 8.0, (7 - i) / 8.0); //RGBA8(0xFF, 0xFF, 0xFF, 32 * (7 - i))
+			CurGame->Draw();
 			C3D_FrameEnd(0);
-		} else if (GameState == "betathanks") {
-			if (kDown & (KEY_SELECT | KEY_A | KEY_B | KEY_X | KEY_Y | KEY_L | KEY_R | KEY_ZL | KEY_ZR | KEY_START)) { //set return state to 2
+			frame++;
+		}
+		else if (GameState == "betathanks") {
+			if (kDown & (KEY_SELECT | KEY_A | KEY_B | KEY_X | KEY_Y | KEY_L | KEY_R | KEY_ZL | KEY_ZR | KEY_START)) {
 				PreviousGameState = GameState;
 				GameState = "title";
 			}
@@ -185,7 +156,8 @@ int main(int argc, char **argv) {
 			C2D_SceneBegin(top);
 			DrawTexture(GetImage(uiSheet, ui_thanksbeta_idx), 80, 20);
 			C3D_FrameEnd(0);
-		} else if (GameState == "extra0") {
+		}
+		else if (GameState == "extra0") {
 			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 			C2D_TargetClear(top, C2D_Color32f(0.585f, 0.585f, 0.585f, 1.0f));
 			C2D_SceneBegin(top);
@@ -197,7 +169,8 @@ int main(int argc, char **argv) {
 				PreviousGameState = GameState;
 				GameState = "title";
 			}
-		} else if (GameState == "editor") {
+		}
+		else if (GameState == "editor") {
 			//stuff
 			PreviousGameState = GameState;
 			GameState = "title";
@@ -205,7 +178,8 @@ int main(int argc, char **argv) {
 
 		if (UpdateText) {
 			if (GameState == "title" || (GameState == "exit" && PreviousGameState == "title")) {
-				consoleSelect(&bottomScreen); consoleClear();
+				consoleSelect(&bottomScreen);
+				consoleClear();
 				std::cout << ConsoleColor("0", false);
 				std::cout << ConsoleMove(0, 2) << "Press Select to begin.\n";
 				std::cout << "Press X to see what I'm working on or have planned.\n";
@@ -215,15 +189,19 @@ int main(int argc, char **argv) {
 				std::cout << "May cause undesireable results on VERY" "\n" "rare occasions.\n";
 
 				//Create a graphic text class, specifically for the press [button] to start game text to flash every 30 frames it toggles
-			} else if (GameState == "game" || (GameState == "exit" && PreviousGameState == "game")) {
-				consoleSelect(&bottomScreen); consoleClear();
+			}
+			else if (GameState == "game" || (GameState == "exit" && PreviousGameState == "game")) {
+				consoleSelect(&bottomScreen);
+				consoleClear();
 				std::cout << ConsoleColor("0", false);
 				std::cout << ConsoleMove(0, 13);
 				std::cout << "Score: " << "POINTS GO HERE" << "\nLives: " << "LIVES GO HERE" << "\n";
 				std::cout << "Collision being tested " << (OdsMode ? 100 : 300) << "x/frame.\n";
 				std::cout << /*debug_string +*/ "\n";
-			} else if (GameState == "betathanks" || (GameState == "exit" && PreviousGameState == "betathanks")) {
-				consoleSelect(&bottomScreen); consoleClear();
+			}
+			else if (GameState == "betathanks" || (GameState == "exit" && PreviousGameState == "betathanks")) {
+				consoleSelect(&bottomScreen);
+				consoleClear();
 				std::cout << ConsoleMove(0,0);
 				std::cout << "[Press any key to return to the title.]\n";
 				std::cout << "Thanks to:\n\n";
@@ -238,8 +216,10 @@ int main(int argc, char **argv) {
 				std::cout << "     And " << ConsoleColor(MagentaF, false) << "YOU" << ConsoleColor("0", false) << " for playing my game!\n";
 				std::cout << "    And remember, all feedback and\n";
 				std::cout << "       suggestions are welcome!\n";
-			} else if (GameState == "extra0" || (GameState == "exit" && PreviousGameState == "extra0")) {
-				consoleSelect(&bottomScreen); consoleClear();
+			}
+			else if (GameState == "extra0" || (GameState == "exit" && PreviousGameState == "extra0")) {
+				consoleSelect(&bottomScreen);
+				consoleClear();
 				std::cout << ConsoleMove(0,0);
 				std::cout << "The blue cracked brick was orginally\n";
 				std::cout << "going to be the design for the normal\n";
@@ -267,11 +247,14 @@ int main(int argc, char **argv) {
 				std::cout << "suggestions!\n";
 			}
 
-			consoleSelect(&killBox); consoleClear();
+			consoleSelect(&killBox);
+			consoleClear();
 			std::cout << ConsoleColor(RedF, RedB, false);
-			for (int i = 0; i < 80; i++) std::cout << " ";
+			for (int i = 0; i < 80; i++)
+				std::cout << " ";
 
-			consoleSelect(&versionWin); consoleClear();
+			consoleSelect(&versionWin);
+			consoleClear();
 			std::cout << ConsoleColor("0", false);
 			std::cout << "     Tap red area any time to exit";
 			std::cout << "Breakout Version: " << ConsoleColor(RedF, false) << VersionText << " " << ConsoleColor(YellowF, false) << VersionNumber;
@@ -279,6 +262,9 @@ int main(int argc, char **argv) {
 			std::cout << ConsoleColor(GreenF, RedB, false) << "   ISHUPE Engine Version: " << EngineVersion;
 			UpdateText = false;
 		}
+
+		if (frame == 61)
+			frame = 0;
 
 		if (touchInBox(touch, 0, 224, 320, 16)) {
 			PreviousGameState = GameState;
@@ -301,4 +287,33 @@ int main(int argc, char **argv) {
 	csndExit();
 
 	return 0;
+}
+
+
+std::string ConsoleMove(int x, int y) {
+	return std::string(ANSI) + std::string(y + ";" + x) + std::string(PEnd);
+}
+
+std::string ConsoleColor(std::string foreground, bool bright) {
+	return std::string(ANSI) + foreground + (bright ? ";2" : "") + std::string(CEnd);
+}
+
+std::string ConsoleColor(std::string foreground, std::string background, bool bright) {
+	return std::string(ANSI) + foreground + ";" + background + (bright ? ";2" : "") + std::string(CEnd);
+}
+
+bool touchInBox(touchPosition touch, int x, int y, int w, int h) {
+	return (kDown & KEY_TOUCH && touch.px > x && touch.px < x + w && touch.py > y && touch.py < y + h);
+}
+
+void DrawTexture(C2D_Image image, float x, float y, float rotation, C2D_ImageTint* tint, float scaleX, float scaleY) {
+	C2D_DrawImageAtRotated(image, x, y, 1.0f, rotation, tint, scaleX, scaleY);
+}
+
+void DrawTexture(C2D_Image image, float x, float y, float scaleX, float scaleY) {
+	C2D_DrawImageAt(image, x, y, 1.0f, NULL, scaleX, scaleY);
+}
+
+void DrawTexture(C2D_Image image, float x, float y) {
+	DrawTexture(image, x, y, 1.0f, 1.0f);
 }

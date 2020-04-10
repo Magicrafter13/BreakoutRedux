@@ -5,12 +5,17 @@ class Paddle {
 	float width, height;
 	int size;
 public:
+	float CenterX() {
+		return x + width / 2.0f;
+	}
 	bool Inside(float tX, float tY) {
-		if (tX < x || tX > x + width || tY < y || tY > y + height) return false;
-		return true;
+		return !(tX < x || tX > x + width || tY < y || tY > y + height);
 	}
 	void Move(int amount) {
 		x += amount;
+	}
+	std::vector<float> Error(float tX, float tY) {
+		return std::vector<float> { tX < x + width / 2.0f ? tX - x : tX - x - width, tY - y };
 	}
 	void Draw() {
 		C2D_DrawRectangle(x, y, 0.0f, width, height, C2D_Color32(0xFF, 0xFF, 0x00, 0xFF), C2D_Color32(0xFF, 0xFF, 0x00, 0xFF), C2D_Color32(0xFF, 0xFF, 0x00, 0xFF), C2D_Color32(0xFF, 0xFF, 0x00, 0xFF));
