@@ -12,8 +12,8 @@ C2D_SpriteSheet powerupSheet;
 
 PrintConsole bottomScreen, versionWin, killBox, debugBox;
 
-std::string VersionText = " Alpha ", VersionNumber = "02.00.00";
-std::string BuildNumber = "20.04.10.2050", EngineVersion = "01.00.00";
+std::string VersionText = " Alpha ", VersionNumber = "02.01.00";
+std::string BuildNumber = "20.04.10.2100", EngineVersion = "01.00.00";
 
 std::string ConsoleMove(int x, int y);
 std::string ConsoleColor(std::string foreground, bool bright);
@@ -240,11 +240,10 @@ int main(int argc, char **argv) {
 			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 			C2D_TargetClear(top, C2D_Color32f(0.585f, 0.585f, 0.585f, 1.0f));
 			C2D_SceneBegin(top);
-			for (int y = 0; y < 5; y++) {
-				for (int x = 0; x < 10; x++) {
-					Brick(x * 40 + 2, y * 20 + 2, 36, 16, workingLevel[y][x]).Draw();
-				}
-			}
+			for (int y = 0; y < 5; y++)
+				for (int x = 0; x < 10; x++)
+					if (workingLevel[y][x] > 0)
+						Brick(x * 40 + 2, y * 20 + 2, 36, 16, workingLevel[y][x]).Draw();
 			C3D_FrameEnd(0);
 			frame++;
 		}
