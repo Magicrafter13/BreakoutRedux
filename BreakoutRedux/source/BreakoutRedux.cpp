@@ -12,8 +12,8 @@ C2D_SpriteSheet powerupSheet;
 
 PrintConsole bottomScreen, versionWin, killBox, debugBox;
 
-std::string VersionText = " Alpha ", VersionNumber = "01.00.00";
-std::string BuildNumber = "20.04.10.0000", EngineVersion = "01.00.00";
+std::string VersionText = " Alpha ", VersionNumber = "02.00.00";
+std::string BuildNumber = "20.04.10.2050", EngineVersion = "01.00.00";
 
 std::string ConsoleMove(int x, int y);
 std::string ConsoleColor(std::string foreground, bool bright);
@@ -68,7 +68,15 @@ int main(int argc, char **argv) {
 	bool UpdateText = true, UpdateTextThanks = false;
 	int CurPlayer = 0;
 	Game *CurGame;
-	Game Games[1] = { Game() };
+	Game Games[1] = { Game(false) };
+	int workingLevel[5][10] = {
+		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+	};
+	int cursorX, cursorY;
 
 	int frame = 0;
 
@@ -82,7 +90,7 @@ int main(int argc, char **argv) {
 		kHeld = hidKeysHeld();
 		if (GameState == "title") {
 			if (kDown & KEY_START) {
-				Games[0] = Game();
+				Games[0] = Game(false);
 				CurGame = &Games[0];
 				PreviousGameState = GameState;
 				GameState = "game";
@@ -94,6 +102,8 @@ int main(int argc, char **argv) {
 				UpdateText = true;
 			}
 			if (kDown & KEY_Y) {
+				cursorX = 0;
+				cursorY = 0;
 				PreviousGameState = GameState;
 				GameState = "editor"; //level designer
 				UpdateText = true;
@@ -168,12 +178,75 @@ int main(int argc, char **argv) {
 			if (kDown & (KEY_SELECT | KEY_A | KEY_B | KEY_X | KEY_Y | KEY_L | KEY_R | KEY_ZL | KEY_ZR | KEY_START)) {
 				PreviousGameState = GameState;
 				GameState = "title";
+				UpdateText = true;
 			}
 		}
 		else if (GameState == "editor") {
-			//stuff
-			PreviousGameState = GameState;
-			GameState = "title";
+			// Handle Controls
+			if (kDown & KEY_B) {
+				PreviousGameState = GameState;
+				GameState = "title";
+				UpdateText = true;
+			}
+			if (kDown & KEY_UP) {
+				if (cursorY > 0)
+					cursorY--;
+				else
+					cursorY = 4;
+			}
+			if (kDown & KEY_DOWN) {
+				if (cursorY < 4)
+					cursorY++;
+				else
+					cursorY = 0;
+			}
+			if (kDown & KEY_LEFT) {
+				if (cursorX > 0)
+					cursorX--;
+				else
+					cursorX = 9;
+			}
+			if (kDown & KEY_RIGHT) {
+				if (cursorX < 9)
+					cursorX++;
+				else
+					cursorX = 0;
+			}
+			if (kDown & KEY_START) {
+				Games[0] = Game(true);
+				std::vector<Brick> newData;
+				for (int y = 0; y < 5; y++)
+					for (int x = 0; x < 10; x++)
+						newData.push_back(Brick(x * 40 + 2, y * 20 + 2, 36, 16, workingLevel[y][x]));
+				Games[0].SetLevel(newData);
+				CurGame = &Games[0];
+				PreviousGameState = GameState;
+				GameState = "game";
+				UpdateText = true;
+			}
+			if (kDown & (KEY_L | KEY_Y | KEY_ZL)) {
+				if (workingLevel[cursorY][cursorX] > 0)
+					workingLevel[cursorY][cursorX]--;
+				else
+					workingLevel[cursorY][cursorX] = 11;
+			}
+			if (kDown & (KEY_R | KEY_X | KEY_ZR)) {
+				if (workingLevel[cursorY][cursorX] < 11)
+					workingLevel[cursorY][cursorX]++;
+				else
+					workingLevel[cursorY][cursorX] = 0;
+			}
+			// Update the Screen
+			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+			C2D_TargetClear(top, C2D_Color32f(0.585f, 0.585f, 0.585f, 1.0f));
+			C2D_SceneBegin(top);
+			for (int y = 0; y < 5; y++) {
+				for (int x = 0; x < 10; x++) {
+					Brick(x * 40 + 2, y * 20 + 2, 36, 16, workingLevel[y][x]).Draw();
+				}
+			}
+			C3D_FrameEnd(0);
+			frame++;
 		}
 
 		if (UpdateText) {

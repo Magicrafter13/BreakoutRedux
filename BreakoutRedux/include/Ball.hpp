@@ -1,19 +1,19 @@
 #include "BreakoutRedux.hpp"
 
 class Ball {
-	float x, y;
-	float radius;
+	double x, y;
+	double radius;
 	int degree; //convert like this: degree * (PI / 1800)
 	std::vector<Brick*> bricks;
 	Paddle paddle = Paddle(0.0f, 0.0f, 0.0f, 0.0f);
-	float slope;
-	std::vector<float> range;
+	double slope;
+	std::vector<double> range;
 	std::vector<Brick*> collidingBricks;
 public:
-	float speed;
+	double speed;
 	void Move() {
-		x += (float)cos((double)degree * (PI / 1800.0)) * (speed / 60.0f);
-		y += (float)sin((double)degree * (PI / 1800.0)) * (speed / 60.0f);
+		x += cos((double)degree * (PI / 1800.0)) * (speed / 60.0);
+		y += sin((double)degree * (PI / 1800.0)) * (speed / 60.0);
 		range = Range();
 	}
 	void Up(int amount) { //FOR TESTING ONLY
@@ -21,47 +21,55 @@ public:
 		range = Range();
 	} //DO NOT KEEP
 	void Update(std::vector<Brick*> sBricks, Paddle sPaddle) {
-		if (speed == 0.0f) {
+		if (speed == 0.0) {
 			x = sPaddle.CenterX();
 			return;
 		}
 		bricks = sBricks;
 		paddle = sPaddle;
 		bool collision = false;
-		std::vector<float> error = { 0.0f, 0.0f };
-		float dX = cos((float)degree * (float)PI / 1800.0f);
-		float dY = sin((float)degree * (float)PI / 1800.0f);
+		std::vector<double> error = { 0.0, 0.0 };
+		double dX = cos((double)degree * PI / 1800.0);
+		double dY = sin((double)degree * PI / 1800.0);
 		std::vector<Brick*> toCheck = std::vector<Brick*>();
 		for (Brick* brick : bricks) {
 			if (brick->Exists()) {
-				std::vector<float> tC = brick->Coords();
-				if (!(tC[0] + tC[2] < x - radius - speed / 100.0f || tC[1] + tC[3] < y - radius - speed / 100.0f || tC[0] > x + radius + 1.0f || tC[1] > y + radius + speed / 100.0f))
+				std::vector<double> tC = brick->Coords();
+				if (!(tC[0] + tC[2] < x - radius - speed / 100.0 || tC[1] + tC[3] < y - radius - speed / 100.0 || tC[0] > x + radius + speed / 100.0 || tC[1] > y + radius + speed / 100.0))
 					toCheck.push_back(brick);
 			}
 		}
 		bool checkPaddle = y > 194;
-		for (float distance = 0.1f; distance < speed / 100.0f && !collision; distance += 0.2f) {
-			float drawX = x + dX * distance;
-			float drawY = y + dY * distance;
-			// instead of going from -900 to 900 (relative) start with 0 then add 1, subtract 2, add 3, subtract 4, etc
+		for (double distance = 0.1; distance < speed / 100.0 && !collision; distance += 0.2) {
+			double drawX = x + dX * distance;
+			double drawY = y + dY * distance;
+			double specialX[] = { drawX + radius, drawX, drawX - radius, drawX };
+			double specialY[] = { drawY, drawY + radius, drawY, drawY - radius };
+			// instead of going from -90 to 90 (relative) start with 0 then add 1, subtract 2, add 3, subtract 4, etc
 			int change = 0;
 			int step = 0;
 			for (int angle = degree; angle < degree + 901 && !collision; angle += (change % 2 == 0 ? change * -1 : change) * 10) {
 				switch (step) {
 				case 0:
-					angle = (TravelQuadrant() - 1) * 900;
+					angle = 0;
 					break;
 				case 1:
-					angle = TravelQuadrant() * 900;
+					angle = 900;
+					break;
+				case 2:
+					angle = 1800;
+					break;
+				case 3:
+					angle = 2700;
 					break;
 				default:
 					change++;
+					break;
 				}
-				step++;
-				float tX = drawX + cos((float)angle * (float)PI / 1800.0f) * radius;
-				float tY = drawY + sin((float)angle * (float)PI / 1800.0f) * radius;
+				double tX = step < 4 ? specialX[step] : drawX + cos((double)angle * PI / 1800.0) * radius;
+				double tY = step < 4 ? specialY[step] : drawY + sin((double)angle * PI / 1800.0) * radius;
 				if (tX <= 0 || tX >= 400 || tY <= 0) {
-					error = { (angle > 1350 && angle < 2250) || angle < 450 || angle > 3150 ? tX <= 0.0f ? tX : tX - 400.0f : tX - x, angle > 2250 && angle < 3150 ? tY : y - tY };
+					error = { (angle > 1350 && angle < 2250) || angle < 450 || angle > 3150 ? tX <= 0 ? tX : tX - 400.0 : tX - x, angle > 2250 && angle < 3150 ? tY : y - tY };
 					collision = true;
 				}
 				else if (checkPaddle && paddle.Inside(tX, tY)) {
@@ -70,30 +78,28 @@ public:
 				}
 				else if (!checkPaddle) {
 					for (Brick* brick : toCheck) {
-						if (brick->Exists()) {
-							std::vector<float> tC = brick->Coords();
-							if (tC[0] + tC[2] < drawX - radius - 1.0f || tC[1] + tC[3] < drawY - radius - 1.0f || tC[0] > drawX + radius + 1.0f || tC[1] > drawY + radius + 1.0f)
-								continue;
-							// check if we've already collided
-							if (brick->Inside(tX, tY)) {
-								brick->Hit();
-								//error = brick->Error(tX, tY);
-								//add to collidingBricks
-								collision = true;
-								break;
-							}
+						// check if we've already collided
+						if (brick->Inside(tX, tY)) {
+							//std::cout << "0: " << (brick->Inside(drawX + radius, drawY) ? "Y" : "N") << ", 90: " << (brick->Inside(drawX, drawY + radius) ? "Y" : "N") << ", 180: " << (brick->Inside(drawX - radius, drawY) ? "Y" : "N") << ", 270: " << (brick->Inside(drawX, drawY - radius) ? "Y" : "N") << "\n";
+							brick->Hit();
+							//error = brick->Error(tX, tY);
+							//add to collidingBricks
+							collision = true;
+							break;
 						}
 					}
 				}
 				if (collision) {
 					int difference = angle - degree;
-					//degree = angle + 1800 + difference;
-					AddDegree(angle + 1800 + difference - degree);
+					AddDegree(2 * angle + 1800 - degree * 2);
 					x -= error[0];
 					y -= error[1];
-					std::cout << "Collision at " << angle << ".\n";
-					if (step < 3) std::cout << "Step " << step << "\n";
+					//std::cout << "Collision at " << angle << ".\n";
+					//if (step < 4) std::cout << "Step " << step << "\n";
 				}
+				if (step < 4)
+					angle = degree;
+				step++;
 			}
 		}
 		// check if any of the contents of collidingBricks are no longer nearby and if not, remove them
@@ -211,66 +217,42 @@ public:
 		if (degree < 3600) return 4;
 		return 5;
 	}
-	std::vector<float> Range() {
+	std::vector<double> Range() {
 		switch (TravelQuadrant()) {
 		case 1:
-			return std::vector<float> { x + 1.0f, x + 2.0f, y + 1.0f, y + 2.0f };
+			return std::vector<double> { x + 1.0, x + 2.0, y + 1.0, y + 2.0 };
 		case 2:
-			return std::vector<float> { x - 2.0f, x - 1.0f, y + 1.0f, y + 2.0f };
+			return std::vector<double> { x - 2.0, x - 1.0, y + 1.0, y + 2.0 };
 		case 3:
-			return std::vector<float> { x - 2.0f, x - 1.0f, y - 2.0f, y - 1.0f };
+			return std::vector<double> { x - 2.0, x - 1.0, y - 2.0, y - 1.0 };
 		case 4:
-			return std::vector<float> { x + 1.0f, x + 2.0f, y - 2.0f, y - 1.0f };
+			return std::vector<double> { x + 1.0, x + 2.0, y - 2.0, y - 1.0 };
 		default:
-			return std::vector<float> { 0.0f, 0.0f, 0.0f, 0.0f };
+			return std::vector<double> { 0.0, 0.0, 0.0, 0.0 };
 		}
 	}
-	float Slope() {
-		return (float)tan((double)degree * (PI / 1800.0));
+	double Slope() {
+		return tan((double)degree * PI / 1800.0);
 	}
 	bool Exists() {
-		return y < 240 + radius;
+		return y < 240.0 + radius;
 	}
 	void Draw() {
-		C2D_DrawEllipse(x - radius, y - radius, 0.0f, radius * 2.0f, radius * 2.0f, C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF));
-		C2D_DrawEllipse(x - radius + 1.0f, y - radius + 1.0f, 0.0f, radius * 2.0f - 2.0f, radius * 2.0f - 2.0f, C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF));
-		//C2D_DrawEllipse(ghostCoords[0], ghostCoords[1], 0.0f, radius * 2.0f, radius * 2.0f, C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF));
-		//C2D_DrawEllipse(ghostCoords[0] + 1.0f, ghostCoords[1] + 1.0f, 0.0f, radius * 2.0f - 2.0f, radius * 2.0f - 2.0f, C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF));
-		//x = (y - y1)/m + x1
-		//y = m(x - x1) + y1
-		/*if (slope < 1.0f && slope > -1.0f) {
-			for (int drawX = (int)round(range[0]); drawX < (int)round(range[1]); drawX++) {
-				float drawY = slope * ((float)drawX - x) + y;
-				if (drawX < 0 || drawX >= 400 || drawY < 0 || drawY >= 240) continue;
-				float drawLeft[] = { (float)drawX + (float)cos((double)(degree - 900) * (PI / 1800.0)) * radius, drawY + (float)sin((double)(degree - 900) * (PI / 1800.0)) * radius };
-				float drawRight[] = { (float)drawX + (float)cos((double)(degree + 900) * (PI / 1800.0)) * radius, drawY + (float)sin((double)(degree + 900) * (PI / 1800.0)) * radius };
-				DrawTexture(GetImage(spriteSheet, sprites_cyan_idx), (float)drawX, drawY);
-				DrawTexture(GetImage(spriteSheet, sprites_green_idx), drawLeft[0], drawLeft[1]);
-				DrawTexture(GetImage(spriteSheet, sprites_green_idx), drawRight[0], drawRight[1]);
-			}
-		} else {
-			for (int drawY = (int)round(range[2]); drawY < (int)round(range[3]); drawY++) {
-				float drawX = ((float)drawY - y) / slope + x;
-				if (drawX < 0 || drawX >= 400 || drawY < 0 || drawY >= 240) continue;
-				float drawLeft[] = { drawX + (float)cos((double)(degree - 900) * (PI / 1800.0)) * radius, (float)drawY + (float)sin((double)(degree - 900) * (PI / 1800.0)) * radius };
-				float drawRight[] = { drawX + (float)cos((double)(degree + 900) * (PI / 1800.0)) * radius, (float)drawY + (float)sin((double)(degree + 900) * (PI / 1800.0)) * radius };
-				DrawTexture(GetImage(spriteSheet, sprites_cyan_idx), drawX, (float)drawY);
-				DrawTexture(GetImage(spriteSheet, sprites_green_idx), drawLeft[0], drawLeft[1]);
-				DrawTexture(GetImage(spriteSheet, sprites_green_idx), drawRight[0], drawRight[1]);
-			}
-		}*/
+		//DrawTexture(GetImage(spriteSheet, sprites_ball00_idx), x - radius, y - radius);
+		C2D_DrawEllipse(x - radius, y - radius, 0.0, radius * 2.0, radius * 2.0, C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF));
+		C2D_DrawEllipse(x - radius + 1.0, y - radius + 1.0, 0.0, radius * 2.0 - 2.0, radius * 2.0 - 2.0, C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF));
 	}
-	void Reset(float sX, float sY, float sRadius, std::vector<Brick*> sBricks, Paddle sPaddle) {
+	void Reset(double sX, double sY, double sRadius, std::vector<Brick*> sBricks, Paddle sPaddle) {
 		x = sX;
 		y = sY;
 		radius = sRadius;
 		degree = 3150;
-		speed = 0.0f;
+		speed = 0.0;
 		range = Range();
 		slope = Slope();
 		Update(sBricks, sPaddle);
 	}
-	Ball(float sX, float sY, float sRadius, std::vector<Brick*> sBricks, Paddle sPaddle) {
+	Ball(double sX, double sY, double sRadius, std::vector<Brick*> sBricks, Paddle sPaddle) {
 		Reset(sX, sY, sRadius, sBricks, sPaddle);
 	}
 };

@@ -4,10 +4,12 @@ A complete rewrite of my previous attempt: [Breakout](https://github.com/Magicra
 
 -Written by Magicrafter13 (Matthew Rease).
 
+The code is tested in the Citra emulator, and sometimes tested on real hardware.  
+Current status of repository code: ![Code Status](https://oldforgeinn.ddns.net/brStatus.png)
+
 ### Screenshots
 
-(Pending...)  
-![Screenshot1](/BreakoutLeft.png) ![Screenshot2](/BreakoutRight.png)
+![Screenshot1](screenshot1.png) ![Screenshot2](screenshot2.png) ![Screenshot3](screenshot3.png)
 
 
 # Play
@@ -23,6 +25,8 @@ To play this, just download a precompiled binary (3dsx, cia, or elf) from the re
 * __L and R__ (Hold) Subtacts or Adds 0.5 degrees to the ball's angle, respectively
 * __X and B__ Adds or Subtracts 5 from the ball's y coordinate, respectively
 * __Y and A__ Subtracts or Adds 5 degrees to the ball's angle, respectively
+* __Select__ Launch ball
+* __Start__ Return (to previous screen, ie: title screen, or level designer)
 
 #### In - Game ####  
 * __D-Pad__ or Joystick to move Left and Right
@@ -31,13 +35,11 @@ To play this, just download a precompiled binary (3dsx, cia, or elf) from the re
 * __Y__ to open Level editor
 * __Start__ to exit
 
-#### In Level Editor ####  
+#### In - Level Editor ####  
 * __D-Pad__ or __Joystick__ to move cursor
-* __L__ and __R__ to switch brick type
-* __X__ to save level layout
-* __B__ or __Start__ to return to title
-* __Y__ to randomize brick layout
-* __Select__ play your level
+* __L__/__R__, __ZL__/__ZR__ or __Y__/__X__ to switch brick type
+* __B__ return to title
+* __Start__ play your level
 
 ## "Nightlies"  
 (Not currently available)  
