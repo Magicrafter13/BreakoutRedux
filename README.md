@@ -47,7 +47,10 @@ Available on my website. [Click Here!](https://oldforgeinn.ddns.net/)
 
 # Edit / self-compile  
 To compile this game, you shouldn't need to install anything extra, as long as you have libctru and citro3d (and citro2d) it should work, if not make sure to tell me.  
+You will need [bannertool.exe](https://github.com/Steveice10/bannertool/releases) to create the smdh file.  
+In the BreakoutRedux subfolder, run `make` to compile the game.
 
-You will also need [bannertool.exe](https://github.com/Steveice10/bannertool/releases). Either place it in `<this_repo>\BreakoutRedux`, or place it somewhere in your command `PATH`. (Windows)
+If you want to create the CIA file, to install the game to your system launcher, you will need [makerom.exe](https://github.com/jakcron/Project_CTR).  
+In the BreakoutRedux subfolder, run `make cia` to create the cia file.
 
-Just go to the BreakoutRedux subfolder and run `make` in the command line.  
+If you're on Linux, I'm not entirely sure how it works, though I'm fairly certain there are Linux versions of bannertool and makerom.
