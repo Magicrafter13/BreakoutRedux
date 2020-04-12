@@ -4,21 +4,24 @@
 #include "Paddle.hpp"
 #include "Ball.hpp"
 
+struct Powerup {
+	double x, y;
+	double width, height;
+	double speed;
+	int type;
+};
+
 class Game {
 	//Player player;
 	std::vector<Brick*> bricks;
 	Paddle *paddle = new Paddle(0.0, 0.0, 0.0, 0.0);
 	std::vector<Ball*> balls;
-	int level;
-	bool customLevel;
+	int currentLevelSet, currentLevel;
 	int lives;
 
-	void SetBricks() {
-		if (customLevel)
-			return;
-		std::vector<Brick> *tBricks = GetLevelBricks(level);
-		bricks = std::vector<Brick*>();
-		for (Brick brick : *tBricks)
+	void LoadLevel() {
+		std::vector<Brick>* requestedData = GetLevel(currentLevelSet, currentLevel);
+		for (Brick brick : *requestedData)
 			bricks.push_back(new Brick(brick));
 	}
 	void ResetBalls() {
@@ -63,15 +66,10 @@ public:
 		if (nextLevel) {
 			ResetBalls();
 			balls[0]->Update(bricks, *paddle);
-			level++;
-			SetBricks();
+			currentLevel++;
+			LoadLevel();
 		}
 		return lives;
-	}
-	void SetLevel(std::vector<Brick> newData) {
-		bricks.clear();
-		for (Brick brick : newData)
-			bricks.push_back(new Brick(brick));
 	}
 	void Draw() {
 		for (Brick *brick : bricks)
@@ -84,18 +82,18 @@ public:
 			ball->Draw();
 		//draw powerups
 	}
-	void Reset(bool custom) {
+	void Reset(int levelSet) {
 		//player = Player();
 		lives = 3;
-		level = custom ? -1 : 0;
-		customLevel = custom;
-		SetBricks();
+		currentLevelSet = levelSet;
+		currentLevel = 0;
+		LoadLevel();
 		paddle = new Paddle(175.0, 215.0, 50.0, 10.0);
 		ResetBalls();
 		/*level = 1; points = 0; last_power = 0;
 		times_power_1 = 0; times_power_2 = 0; times_power_3 = 0;*/
 	}
-	Game(bool custom) {
-		Reset(custom);
+	Game(int levelSet) {
+		Reset(levelSet);
 	}
 };

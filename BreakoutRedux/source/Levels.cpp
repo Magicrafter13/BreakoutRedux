@@ -1,91 +1,222 @@
 #include "Levels.hpp"
 
-std::vector<int> GetLevelTypes(int lvl) {
-	switch (lvl) {
-	case 0:
-		return std::vector<int> {
-			5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-			4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-			3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-			2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-		};
-	 case 1:
-		 return std::vector<int> {
-		 	5, 5, 0, 0, 0, 0, 0, 0, 0, 0,
-			4, 4, 4, 4, 0, 0, 0, 0, 0, 0,
-			3, 3, 3, 3, 3, 3, 0, 0, 0, 0,
-			2, 2, 2, 2, 2, 2, 2, 2, 0, 0,
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-		};
-	case 2:
-		return std::vector<int> {
-			0,  1, 0, 0, 0, 0, 0, 0,  1, 0,
-			0, 10, 0, 0, 0, 0, 0, 0,  6, 0,
-			0,  8, 0, 0, 0, 0, 0, 0,  9, 0,
-			0,  9, 3, 1, 3, 4, 3, 2,  8, 0,
-			0,  6, 3, 3, 5, 3, 2, 2, 10, 0
-		};
-	case 3:
-		return std::vector<int> {
-			0, 0, 1, 1, 2, 2, 1, 1, 0, 0,
-			1, 1, 2, 2, 3, 3, 2, 2, 1, 1,
-			2, 2, 3, 3, 9, 9, 3, 3, 2, 2,
-			1, 1, 2, 2, 3, 3, 2, 2, 1, 1,
-			0, 0, 1, 1, 2, 2, 1, 1, 0, 0
-		};
-	case 4:
-		return std::vector<int> {
-			5,  0,  3,  2,  0,  0,  2,  3,  0,  5,
-			4,  8,  2,  1, 10, 10,  1,  2,  8,  4,
-			0,  2,  0,  0,  9,  9,  0,  0,  2,  0,
-			4,  8,  2,  1, 10, 10,  1,  2,  8,  4,
-			5,  0,  3,  2,  0,  0,  2,  3,  0,  5
-		};
-	default:
-		return std::vector<int> {
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-		};
-	}
-}
+#define levelsets 2
 
-std::vector<int> GetLevelSize(int lvl) {
-	switch (lvl) {
-	default:
-		return std::vector<int> { 10, 5 };
-	}
-}
+std::vector<std::vector<Brick>> LevelSet[levelsets] = {
+	std::vector<std::vector<Brick>> {
+		std::vector<Brick> {
+			Brick(2, 2, 36, 16, 5),
+			Brick(42, 2, 36, 16, 5),
+			Brick(82, 2, 36, 16, 5),
+			Brick(122, 2, 36, 16, 5),
+			Brick(162, 2, 36, 16, 5),
+			Brick(202, 2, 36, 16, 5),
+			Brick(242, 2, 36, 16, 5),
+			Brick(282, 2, 36, 16, 5),
+			Brick(322, 2, 36, 16, 5),
+			Brick(362, 2, 36, 16, 5),
+			Brick(2, 22, 36, 16, 4),
+			Brick(42, 22, 36, 16, 4),
+			Brick(82, 22, 36, 16, 4),
+			Brick(122, 22, 36, 16, 4),
+			Brick(162, 22, 36, 16, 4),
+			Brick(202, 22, 36, 16, 4),
+			Brick(242, 22, 36, 16, 4),
+			Brick(282, 22, 36, 16, 4),
+			Brick(322, 22, 36, 16, 4),
+			Brick(362, 22, 36, 16, 4),
+			Brick(2, 42, 36, 16, 3),
+			Brick(42, 42, 36, 16, 3),
+			Brick(82, 42, 36, 16, 3),
+			Brick(122, 42, 36, 16, 3),
+			Brick(162, 42, 36, 16, 3),
+			Brick(202, 42, 36, 16, 3),
+			Brick(242, 42, 36, 16, 3),
+			Brick(282, 42, 36, 16, 3),
+			Brick(322, 42, 36, 16, 3),
+			Brick(362, 42, 36, 16, 3),
+			Brick(2, 62, 36, 16, 2),
+			Brick(42, 62, 36, 16, 2),
+			Brick(82, 62, 36, 16, 2),
+			Brick(122, 62, 36, 16, 2),
+			Brick(162, 62, 36, 16, 2),
+			Brick(202, 62, 36, 16, 2),
+			Brick(242, 62, 36, 16, 2),
+			Brick(282, 62, 36, 16, 2),
+			Brick(322, 62, 36, 16, 2),
+			Brick(362, 62, 36, 16, 2),
+			Brick(2, 82, 36, 16, 1),
+			Brick(42, 82, 36, 16, 1),
+			Brick(82, 82, 36, 16, 1),
+			Brick(122, 82, 36, 16, 1),
+			Brick(162, 82, 36, 16, 1),
+			Brick(202, 82, 36, 16, 1),
+			Brick(242, 82, 36, 16, 1),
+			Brick(282, 82, 36, 16, 1),
+			Brick(322, 82, 36, 16, 1),
+			Brick(362, 82, 36, 16, 1)
+		},
+		std::vector<Brick> {
+			Brick(2, 2, 36, 16, 5),
+			Brick(42, 2, 36, 16, 5),
+			Brick(2, 22, 36, 16, 4),
+			Brick(42, 22, 36, 16, 4),
+			Brick(82, 22, 36, 16, 4),
+			Brick(122, 22, 36, 16, 4),
+			Brick(2, 42, 36, 16, 3),
+			Brick(42, 42, 36, 16, 3),
+			Brick(82, 42, 36, 16, 3),
+			Brick(122, 42, 36, 16, 3),
+			Brick(162, 42, 36, 16, 3),
+			Brick(202, 42, 36, 16, 3),
+			Brick(2, 62, 36, 16, 2),
+			Brick(42, 62, 36, 16, 2),
+			Brick(82, 62, 36, 16, 2),
+			Brick(122, 62, 36, 16, 2),
+			Brick(162, 62, 36, 16, 2),
+			Brick(202, 62, 36, 16, 2),
+			Brick(242, 62, 36, 16, 2),
+			Brick(282, 62, 36, 16, 2),
+			Brick(2, 82, 36, 16, 1),
+			Brick(42, 82, 36, 16, 1),
+			Brick(82, 82, 36, 16, 1),
+			Brick(122, 82, 36, 16, 1),
+			Brick(162, 82, 36, 16, 1),
+			Brick(202, 82, 36, 16, 1),
+			Brick(242, 82, 36, 16, 1),
+			Brick(282, 82, 36, 16, 1),
+			Brick(322, 82, 36, 16, 1),
+			Brick(362, 82, 36, 16, 1)
+		},
+		std::vector<Brick> {
+			Brick(42, 2, 36, 16, 1),
+			Brick(322, 2, 36, 16, 1),
+			Brick(42, 22, 36, 16, 10),
+			Brick(322, 22, 36, 16, 6),
+			Brick(42, 42, 36, 16, 8),
+			Brick(322, 42, 36, 16, 9),
+			Brick(42, 62, 36, 16, 9),
+			Brick(82, 62, 36, 16, 3),
+			Brick(122, 62, 36, 16, 1),
+			Brick(162, 62, 36, 16, 3),
+			Brick(202, 62, 36, 16, 4),
+			Brick(242, 62, 36, 16, 3),
+			Brick(282, 62, 36, 16, 2),
+			Brick(322, 62, 36, 16, 8),
+			Brick(42, 82, 36, 16, 6),
+			Brick(82, 82, 36, 16, 3),
+			Brick(122, 82, 36, 16, 3),
+			Brick(162, 82, 36, 16, 5),
+			Brick(202, 82, 36, 16, 3),
+			Brick(242, 82, 36, 16, 2),
+			Brick(282, 82, 36, 16, 2),
+			Brick(322, 82, 36, 16, 10)
+		},
+		std::vector<Brick> {
+			Brick(82, 2, 36, 16, 1),
+			Brick(122, 2, 36, 16, 1),
+			Brick(162, 2, 36, 16, 2),
+			Brick(202, 2, 36, 16, 2),
+			Brick(242, 2, 36, 16, 1),
+			Brick(282, 2, 36, 16, 1),
+			Brick(2, 22, 36, 16, 1),
+			Brick(42, 22, 36, 16, 1),
+			Brick(82, 22, 36, 16, 2),
+			Brick(122, 22, 36, 16, 2),
+			Brick(162, 22, 36, 16, 3),
+			Brick(202, 22, 36, 16, 3),
+			Brick(242, 22, 36, 16, 2),
+			Brick(282, 22, 36, 16, 2),
+			Brick(322, 22, 36, 16, 1),
+			Brick(362, 22, 36, 16, 1),
+			Brick(2, 42, 36, 16, 2),
+			Brick(42, 42, 36, 16, 2),
+			Brick(82, 42, 36, 16, 3),
+			Brick(122, 42, 36, 16, 3),
+			Brick(162, 42, 36, 16, 9),
+			Brick(202, 42, 36, 16, 9),
+			Brick(242, 42, 36, 16, 3),
+			Brick(282, 42, 36, 16, 3),
+			Brick(322, 42, 36, 16, 2),
+			Brick(362, 42, 36, 16, 2),
+			Brick(2, 62, 36, 16, 1),
+			Brick(42, 62, 36, 16, 1),
+			Brick(82, 62, 36, 16, 2),
+			Brick(122, 62, 36, 16, 2),
+			Brick(162, 62, 36, 16, 3),
+			Brick(202, 62, 36, 16, 3),
+			Brick(242, 62, 36, 16, 2),
+			Brick(282, 62, 36, 16, 2),
+			Brick(322, 62, 36, 16, 1),
+			Brick(362, 62, 36, 16, 1),
+			Brick(82, 82, 36, 16, 1),
+			Brick(122, 82, 36, 16, 1),
+			Brick(162, 82, 36, 16, 2),
+			Brick(202, 82, 36, 16, 2),
+			Brick(242, 82, 36, 16, 1),
+			Brick(282, 82, 36, 16, 1)
+		},
+		std::vector<Brick> {
+			Brick(2, 2, 36, 16, 5),
+			Brick(82, 2, 36, 16, 3),
+			Brick(122, 2, 36, 16, 2),
+			Brick(242, 2, 36, 16, 2),
+			Brick(282, 2, 36, 16, 3),
+			Brick(362, 2, 36, 16, 5),
+			Brick(2, 22, 36, 16, 4),
+			Brick(42, 22, 36, 16, 8),
+			Brick(82, 22, 36, 16, 2),
+			Brick(122, 22, 36, 16, 1),
+			Brick(162, 22, 36, 16, 10),
+			Brick(202, 22, 36, 16, 10),
+			Brick(242, 22, 36, 16, 1),
+			Brick(282, 22, 36, 16, 2),
+			Brick(322, 22, 36, 16, 8),
+			Brick(362, 22, 36, 16, 4),
+			Brick(42, 42, 36, 16, 2),
+			Brick(162, 42, 36, 16, 9),
+			Brick(202, 42, 36, 16, 9),
+			Brick(322, 42, 36, 16, 2),
+			Brick(2, 62, 36, 16, 4),
+			Brick(42, 62, 36, 16, 8),
+			Brick(82, 62, 36, 16, 2),
+			Brick(122, 62, 36, 16, 1),
+			Brick(162, 62, 36, 16, 10),
+			Brick(202, 62, 36, 16, 10),
+			Brick(242, 62, 36, 16, 1),
+			Brick(282, 62, 36, 16, 2),
+			Brick(322, 62, 36, 16, 8),
+			Brick(362, 62, 36, 16, 4),
+			Brick(2, 82, 36, 16, 5),
+			Brick(82, 82, 36, 16, 3),
+			Brick(122, 82, 36, 16, 2),
+			Brick(242, 82, 36, 16, 2),
+			Brick(282, 82, 36, 16, 3),
+			Brick(362, 82, 36, 16, 5)
+		}
+	},
+	std::vector<std::vector<Brick>> {
+		std::vector<Brick> {
 
-std::vector<int> GetLevelBrickSize(int lvl) {
-	switch (lvl) {
-	default:
-		return std::vector<int> { 36, 16 };
-	}
-}
-
-std::vector<int> GetLevelSpacing(int lvl) {
-	switch (lvl) {
-	default:
-		return std::vector<int> { 40, 20 };
-	}
-}
-
-std::vector<Brick> *GetLevelBricks(int lvl) {
-	std::vector<Brick> *retVec = new std::vector<Brick>;
-	int ind = 0;
-	std::vector<int> lvlSpacing = GetLevelSpacing(lvl);
-	std::vector<int> lvlBrickSize = GetLevelBrickSize(lvl);
-	std::vector<int> lvlSize = GetLevelSize(lvl);
-	std::vector<int> lvlTypes = GetLevelTypes(lvl);
-	for (int y = 0; y < lvlSize[1]; y++) {
-		for (int x = 0; x < lvlSize[0]; x++) {
-			retVec->push_back(Brick(2 + (lvlSpacing[0] * x), 2 + (lvlSpacing[1] * y), lvlBrickSize[0], lvlBrickSize[1], lvlTypes[ind]));
-			ind++;
 		}
 	}
-	return retVec;
+};
+
+std::vector<Brick>* GetLevel(int levelSet, int level) {
+	if (levelSet < levelsets)
+		if (level < LevelSet[levelSet].size())
+			return &LevelSet[levelSet][level];
+	return new std::vector<Brick>();
+}
+
+bool SetLevel(int levelSet, int level, std::vector<Brick> bricks) {
+	if (levelSet == 0)
+		return false;
+	if (level > LevelSet[levelSet].size())
+		return false;
+	if (level == LevelSet[levelSet].size())
+		LevelSet[levelSet].push_back(bricks);
+	else
+		LevelSet[levelSet][level] = bricks;
+	return true;
 }

@@ -68,7 +68,7 @@ int main(int argc, char **argv) {
 	bool UpdateText = true, UpdateTextThanks = false;
 	int CurPlayer = 0;
 	Game *CurGame;
-	Game Games[1] = { Game(false) };
+	Game Games[1] = { Game(0) };
 	int workingLevel[5][10] = {
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
 		switch (GameState) {
 		case state_title:
 			if (kDown & KEY_START) {
-				Games[0] = Game(false);
+				Games[0] = Game(0);
 				CurGame = &Games[0];
 				PreviousGameState = GameState;
 				GameState = state_game;
@@ -214,12 +214,12 @@ int main(int argc, char **argv) {
 					cursorX = 0;
 			}
 			if (kDown & KEY_START) {
-				Games[0] = Game(true);
 				std::vector<Brick> newData;
 				for (int y = 0; y < 5; y++)
 					for (int x = 0; x < 10; x++)
 						newData.push_back(Brick(x * 40 + 2, y * 20 + 2, 36, 16, workingLevel[y][x]));
-				Games[0].SetLevel(newData);
+				SetLevel(1, 0, newData);
+				Games[0] = Game(1);
 				CurGame = &Games[0];
 				PreviousGameState = GameState;
 				GameState = state_game;
