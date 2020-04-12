@@ -5,7 +5,8 @@ A complete rewrite of my previous attempt: [Breakout](https://github.com/Magicra
 -Written by Magicrafter13 (Matthew Rease).
 
 The code is tested in the Citra emulator, and sometimes tested on real hardware.  
-Current status of repository code: ![Code Status](https://oldforgeinn.ddns.net/brStatus.png)
+Current status of repository code:  
+![Code Status](https://oldforgeinn.ddns.net/brStatus.png)
 
 ### Screenshots
 

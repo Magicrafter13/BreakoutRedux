@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
 
 	//create paddle and ball objects (create classes for them first)
 
-	std::string GameState = "title", PreviousGameState = "title";
+	int GameState = state_title, PreviousGameState = state_title;
 	bool OdsMode = false;
 	bool UpdateText = true, UpdateTextThanks = false;
 	int CurPlayer = 0;
@@ -88,24 +88,25 @@ int main(int argc, char **argv) {
 		hidTouchRead(&touch);
 		kDown = hidKeysDown();
 		kHeld = hidKeysHeld();
-		if (GameState == "title") {
+		switch (GameState) {
+		case state_title:
 			if (kDown & KEY_START) {
 				Games[0] = Game(false);
 				CurGame = &Games[0];
 				PreviousGameState = GameState;
-				GameState = "game";
+				GameState = state_game;
 				UpdateText = true;
 			}
 			if (kDown & KEY_X) {
 				PreviousGameState = GameState;
-				GameState = "extra0"; //extras 10/13/2017
+				GameState = state_extra0; //extras 10/13/2017
 				UpdateText = true;
 			}
 			if (kDown & KEY_Y) {
 				cursorX = 0;
 				cursorY = 0;
 				PreviousGameState = GameState;
-				GameState = "editor"; //level designer
+				GameState = state_editor; //level designer
 				UpdateText = true;
 			}
 			if (kDown & KEY_R) {
@@ -123,12 +124,12 @@ int main(int argc, char **argv) {
 			DrawTexture(GetImage(uiSheet, ui_title_idx), 80, 20);
 			C3D_FrameEnd(0);
 			frame++;
-		}
-		else if (GameState == "game") {
+			break;
+		case state_game:
 			// Handle Controls
 			if (kDown & KEY_START || (frame % 20 == 19 && CurGame->Lives() == 0)) {
 				GameState = PreviousGameState;
-			 	PreviousGameState = "game";
+				PreviousGameState = state_title;
 			}
 			if (kDown & KEY_SELECT) // change to A upon release
 				CurGame->Shoot();
@@ -136,7 +137,7 @@ int main(int argc, char **argv) {
 				CurGame->MovePaddle(-3);
 			if (kHeld & KEY_RIGHT)
 				CurGame->MovePaddle(3);
-			for (Ball *ball : CurGame->GetBalls()) {
+			for (Ball* ball : CurGame->GetBalls()) {
 				if (kDown & KEY_Y) ball->AddDegree(-50);
 				if (kDown & KEY_A) ball->AddDegree(50);
 				if (kDown & KEY_UP) ball->AddDegree(10);
@@ -155,19 +156,19 @@ int main(int argc, char **argv) {
 			CurGame->Draw();
 			C3D_FrameEnd(0);
 			frame++;
-		}
-		else if (GameState == "betathanks") {
+			break;
+		case state_betathanks:
 			if (kDown & (KEY_SELECT | KEY_A | KEY_B | KEY_X | KEY_Y | KEY_L | KEY_R | KEY_ZL | KEY_ZR | KEY_START)) {
 				PreviousGameState = GameState;
-				GameState = "title";
+				GameState = state_title;
 			}
 			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 			C2D_TargetClear(top, C2D_Color32f(0.585f, 0.585f, 0.585f, 1.0f));
 			C2D_SceneBegin(top);
 			DrawTexture(GetImage(uiSheet, ui_thanksbeta_idx), 80, 20);
 			C3D_FrameEnd(0);
-		}
-		else if (GameState == "extra0") {
+			break;
+		case state_extra0:
 			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 			C2D_TargetClear(top, C2D_Color32f(0.585f, 0.585f, 0.585f, 1.0f));
 			C2D_SceneBegin(top);
@@ -177,15 +178,15 @@ int main(int argc, char **argv) {
 			C3D_FrameEnd(0);
 			if (kDown & (KEY_SELECT | KEY_A | KEY_B | KEY_X | KEY_Y | KEY_L | KEY_R | KEY_ZL | KEY_ZR | KEY_START)) {
 				PreviousGameState = GameState;
-				GameState = "title";
+				GameState = state_title;
 				UpdateText = true;
 			}
-		}
-		else if (GameState == "editor") {
+			break;
+		case state_editor:
 			// Handle Controls
 			if (kDown & KEY_B) {
 				PreviousGameState = GameState;
-				GameState = "title";
+				GameState = state_title;
 				UpdateText = true;
 			}
 			if (kDown & KEY_UP) {
@@ -221,7 +222,7 @@ int main(int argc, char **argv) {
 				Games[0].SetLevel(newData);
 				CurGame = &Games[0];
 				PreviousGameState = GameState;
-				GameState = "game";
+				GameState = state_game;
 				UpdateText = true;
 			}
 			if (kDown & (KEY_L | KEY_Y | KEY_ZL)) {
@@ -246,10 +247,27 @@ int main(int argc, char **argv) {
 						Brick(x * 40 + 2, y * 20 + 2, 36, 16, workingLevel[y][x]).Draw();
 			C3D_FrameEnd(0);
 			frame++;
+			break;
+		case state_exit:
+			break;
+		default:
+			GameState = PreviousGameState;
 		}
 
 		if (UpdateText) {
-			if (GameState == "title" || (GameState == "exit" && PreviousGameState == "title")) {
+			switch (GameState) {
+			case state_exit:
+				if (PreviousGameState == state_title)
+					goto case_state_title;
+				if (PreviousGameState == state_game)
+					goto case_state_game;
+				if (PreviousGameState == state_betathanks)
+					goto case_state_betathanks;
+				if (PreviousGameState == state_extra0)
+					goto case_state_extra0;
+				break;
+			case state_title:
+			case_state_title:
 				consoleSelect(&bottomScreen);
 				consoleClear();
 				std::cout << ConsoleColor("0", false);
@@ -261,8 +279,9 @@ int main(int argc, char **argv) {
 				std::cout << "May cause undesireable results on VERY" "\n" "rare occasions.\n";
 
 				//Create a graphic text class, specifically for the press [button] to start game text to flash every 30 frames it toggles
-			}
-			else if (GameState == "game" || (GameState == "exit" && PreviousGameState == "game")) {
+				break;
+			case state_game:
+			case_state_game:
 				consoleSelect(&bottomScreen);
 				consoleClear();
 				std::cout << ConsoleColor("0", false);
@@ -270,11 +289,12 @@ int main(int argc, char **argv) {
 				std::cout << "Score: " << "POINTS GO HERE" << "\nLives: " << "LIVES GO HERE" << "\n";
 				std::cout << "Collision being tested " << (OdsMode ? 100 : 300) << "x/frame.\n";
 				std::cout << /*debug_string +*/ "\n";
-			}
-			else if (GameState == "betathanks" || (GameState == "exit" && PreviousGameState == "betathanks")) {
+				break;
+			case state_betathanks:
+			case_state_betathanks:
 				consoleSelect(&bottomScreen);
 				consoleClear();
-				std::cout << ConsoleMove(0,0);
+				std::cout << ConsoleMove(0, 0);
 				std::cout << "[Press any key to return to the title.]\n";
 				std::cout << "Thanks to:\n\n";
 				std::cout << "Jared for helping me " << ConsoleColor(YellowF, true) << "Beta" << ConsoleColor(WhiteF, true) << " test.\n\n";
@@ -288,11 +308,12 @@ int main(int argc, char **argv) {
 				std::cout << "     And " << ConsoleColor(MagentaF, false) << "YOU" << ConsoleColor("0", false) << " for playing my game!\n";
 				std::cout << "    And remember, all feedback and\n";
 				std::cout << "       suggestions are welcome!\n";
-			}
-			else if (GameState == "extra0" || (GameState == "exit" && PreviousGameState == "extra0")) {
+				break;
+			case state_extra0:
+			case_state_extra0:
 				consoleSelect(&bottomScreen);
 				consoleClear();
-				std::cout << ConsoleMove(0,0);
+				std::cout << ConsoleMove(0, 0);
 				std::cout << "The blue cracked brick was orginally\n";
 				std::cout << "going to be the design for the normal\n";
 				std::cout << "brick but I decided to instead save that";
@@ -317,6 +338,7 @@ int main(int argc, char **argv) {
 				std::cout << "don't worry because it can easily be\n";
 				std::cout << "changed and I'm always open to\n";
 				std::cout << "suggestions!\n";
+				break;
 			}
 
 			consoleSelect(&killBox);
@@ -340,10 +362,10 @@ int main(int argc, char **argv) {
 
 		if (touchInBox(touch, 0, 224, 320, 16)) {
 			PreviousGameState = GameState;
-			GameState = "exit";
+			GameState = state_exit;
 		}
 
-		if (GameState == "exit") {
+		if (GameState == state_exit) {
 			std::cout << "Exiting...";
 			break;
 		}

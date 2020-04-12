@@ -22,6 +22,13 @@ extern void DrawTexture(C2D_Image image, float x, float y, float rotation, C2D_I
 extern void DrawTexture(C2D_Image image, float x, float y, float scaleX, float scaleY);
 extern void DrawTexture(C2D_Image image, float x, float y);
 
+#define state_title 0
+#define state_game 1
+#define state_betathanks 2
+#define state_extra0 3
+#define state_editor 4
+#define state_exit 5
+
 #define ANSI "\x1b["
 #define RedF "31"
 #define RedB "41"
