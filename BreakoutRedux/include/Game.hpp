@@ -92,7 +92,23 @@ public:
 			if (powerups[i]->y < 240) {
 				powerups[i]->y++;
 				if (powerups[i]->y <= coords[1] + coords[3] && powerups[i]->x <= coords[0] + coords[2] && powerups[i]->y + powerups[i]->height >= coords[1] && powerups[i]->x + powerups[i]->width >= coords[0]) {
-					// do something
+					switch (powerups[i]->type) {
+					case 0:
+						//laser
+						break;
+					case 1:
+						// big paddle
+						break;
+					case 2:
+						// small paddle
+						break;
+					case 3:
+						lives++;
+						break;
+					case 4:
+						// multi-ball
+						break;
+					}
 					powerups.erase(powerups.begin() + i);
 				}
 			}
