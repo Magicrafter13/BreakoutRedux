@@ -15,52 +15,52 @@ public:
 		//return;
 		//above is temp
 		switch (type) {
-		case 1:
+		case 0:
 			DrawTexture(GetImage(spriteSheet, sprites_brick01_idx), x, y);
 			break;
-		case 2:
+		case 1:
 			DrawTexture(GetImage(spriteSheet, sprites_brick02_idx), x, y);
 			break;
-		case 3:
+		case 2:
 			DrawTexture(GetImage(spriteSheet, sprites_brick03_idx), x, y);
 			break;
-		case 4:
+		case 3:
 			DrawTexture(GetImage(spriteSheet, sprites_brick04_idx), x, y);
 			break;
-		case 5:
+		case 4:
 			DrawTexture(GetImage(spriteSheet, sprites_brick05_idx), x, y);
 			break;
-		case 6:
+		case 5:
 			if (health == 2)
 				DrawTexture(GetImage(spriteSheet, sprites_brick10_idx), x, y);
 			else
 				DrawTexture(GetImage(spriteSheet, sprites_brick00_idx), x, y);
 			break;
-		case 7:
+		case 6:
 			if (health == 2)
 				DrawTexture(GetImage(spriteSheet, sprites_brick11_idx), x, y);
 			else
 				DrawTexture(GetImage(spriteSheet, sprites_brick06_idx), x, y);
 			break;
-		case 8:
+		case 7:
 			if (health == 2)
 				DrawTexture(GetImage(spriteSheet, sprites_brick12_idx), x, y);
 			else
 				DrawTexture(GetImage(spriteSheet, sprites_brick07_idx), x, y);
 			break;
-		case 9:
+		case 8:
 			if (health == 2)
 				DrawTexture(GetImage(spriteSheet, sprites_brick13_idx), x, y);
 			else
 				DrawTexture(GetImage(spriteSheet, sprites_brick08_idx), x, y);
 			break;
-		case 10:
+		case 9:
 			if (health == 2)
 				DrawTexture(GetImage(spriteSheet, sprites_brick14_idx), x, y);
 			else
 				DrawTexture(GetImage(spriteSheet, sprites_brick09_idx), x, y);
 			break;
-		case 11:
+		case 10:
 			DrawTexture(GetImage(spriteSheet, sprites_brick15_idx), x, y);
 			break;
 		}
@@ -88,11 +88,11 @@ public:
 		height = sHeight;
 		type = sType;
 		// I think I'm gonna change how many "types" there are, and add a 'skin' or 'texture' variable
-		if (type >= 1 && type <= 5)
+		if (type >= 0 && type <= 4)
 			health = 1;
-		else if (type >= 6 && type <= 10)
+		else if (type >= 5 && type <= 9)
 			health = 2;
-		else if (type == 11)
+		else if (type == 10)
 			health = 2147483647;
 		else
 			health = 0;

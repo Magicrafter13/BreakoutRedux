@@ -208,7 +208,8 @@ int main(int argc, char **argv) {
 				std::vector<Brick> newData;
 				for (int y = 0; y < 5; y++)
 					for (int x = 0; x < 10; x++)
-						newData.push_back(Brick(x * 40 + 2, y * 20 + 2, 36, 16, workingLevel[y][x]));
+						if (workingLevel[y][x] > 0)
+							newData.push_back(Brick(x * 40 + 2, y * 20 + 2, 36, 16, workingLevel[y][x] - 1));
 				SetLevel(1, 0, newData);
 				Games[0] = Game(1);
 				CurGame = &Games[0];
@@ -235,7 +236,7 @@ int main(int argc, char **argv) {
 			for (int y = 0; y < 5; y++)
 				for (int x = 0; x < 10; x++)
 					if (workingLevel[y][x] > 0)
-						Brick(x * 40 + 2, y * 20 + 2, 36, 16, workingLevel[y][x]).Draw();
+						Brick(x * 40 + 2, y * 20 + 2, 36, 16, workingLevel[y][x] - 1).Draw();
 			C3D_FrameEnd(0);
 			frame++;
 			break;

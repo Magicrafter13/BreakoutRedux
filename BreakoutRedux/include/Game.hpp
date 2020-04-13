@@ -66,7 +66,7 @@ public:
 		}
 		bool nextLevel = true;
 		for (Brick* brick : bricks)
-			if (brick->GetType() != 11 && brick->Exists()) // I can probably remove the Exists check
+			if (brick->GetType() != 10 && brick->Exists()) // I can probably remove the Exists check
 				nextLevel = false;
 		if (nextLevel) {
 			ResetBalls();
@@ -118,21 +118,21 @@ public:
 		for (size_t i = 0; i < bricks.size(); i++) {
 			if (!bricks[i]->Exists()) {
 				switch (bricks[i]->GetType()) {
+				case 0:
 				case 1:
-				case 2:
-				case 6:
-				case 7: {
+				case 5:
+				case 6: {
 					int chance = rand() % 20;
 					if (chance <= 3)
 						powerups.push_back(new Powerup{ bricks[i]->Coords()[0] + bricks[i]->Coords()[2] / 2, bricks[i]->Coords()[1] + bricks[i]->Coords()[3] / 2, 18, 7, rand() % 5 });
 					break;
 				}
+				case 2:
 				case 3:
 				case 4:
-				case 5:
+				case 7:
 				case 8:
-				case 9:
-				case 10: {
+				case 9: {
 					int chance = rand() % 4;
 					if (chance == 1)
 						powerups.push_back(new Powerup{ bricks[i]->Coords()[0] + bricks[i]->Coords()[2] / 2, bricks[i]->Coords()[1] + bricks[i]->Coords()[3] / 2, 18, 7, rand() % 5 });
