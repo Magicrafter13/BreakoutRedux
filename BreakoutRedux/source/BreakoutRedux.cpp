@@ -12,8 +12,8 @@ C2D_SpriteSheet powerupSheet;
 
 PrintConsole bottomScreen, infoKillWindow;
 
-std::string VersionText = " Alpha ", VersionNumber = "02.01.00";
-std::string BuildNumber = "20.04.10.2100", EngineVersion = "01.00.00";
+std::string VersionText = "  Beta ", VersionNumber = "01.00";
+std::string BuildNumber = "20.04.13.0145";// , EngineVersion = "01.00.00";
 
 std::string ConsoleMove(int x, int y);
 std::string ConsoleColor(std::string foreground, bool bright);
@@ -322,9 +322,10 @@ int main(int argc, char **argv) {
 			consoleClear();
 			std::cout << ConsoleColor("0", false);
 			std::cout << "           Tap red area any time to exit";
-			std::cout << "      Breakout Version: " << ConsoleColor(RedF, false) << VersionText << " " << ConsoleColor(YellowF, false) << VersionNumber;
+			std::cout << "         Breakout Version: " << ConsoleColor(RedF, false) << VersionText << " " << ConsoleColor(YellowF, false) << VersionNumber;
 			std::cout << ConsoleColor(GreenF, RedB, false) << "                    Build: " << BuildNumber;
-			std::cout << ConsoleColor(GreenF, RedB, false) << "         ISHUPE Engine Version: " << EngineVersion;
+			std::cout << "                                        "; // maybe add a randomized message
+			//std::cout << ConsoleColor(GreenF, RedB, false) << "         ISHUPE Engine Version: " << EngineVersion;
 			UpdateText = false;
 		}
 

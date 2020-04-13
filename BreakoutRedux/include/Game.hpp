@@ -36,8 +36,27 @@ public:
 		//[original code] pp2d_draw_texture_scale(extraBallID[i], (tBall.trail_new_frame_circle[i].x - tBall.trail_new_frame_circle[i].rad) + 1.0, (tBall.trail_new_frame_circle[i].y - tBall.trail_new_frame_circle[i].rad) + 2.0, (7 - i) / 8.0, (7 - i) / 8.0); //RGBA8(0xFF, 0xFF, 0xFF, 32 * (7 - i))
 		for (Ball* ball : balls)
 			ball->Draw();
-		for (Powerup* powerup : powerups)
-			C2D_DrawRectangle(powerup->x, powerup->y, 0, powerup->width, powerup->height, C2D_Color32(0x00, 0xFF, 0x00, 0xFF), C2D_Color32(0x00, 0xFF, 0x00, 0xFF), C2D_Color32(0x00, 0xFF, 0x00, 0xFF), C2D_Color32(0x00, 0xFF, 0x00, 0xFF));
+		for (Powerup* powerup : powerups) {
+			//C2D_DrawRectangle(powerup->x, powerup->y, 0, powerup->width, powerup->height, C2D_Color32(0x00, 0xFF, 0x00, 0xFF), C2D_Color32(0x00, 0xFF, 0x00, 0xFF), C2D_Color32(0x00, 0xFF, 0x00, 0xFF), C2D_Color32(0x00, 0xFF, 0x00, 0xFF));
+			//continue;
+			switch (powerup->type) {
+			case 0:
+				DrawTexture(GetImage(powerupSheet, powerups_laser00_idx + (int)(powerup->y / 8) % 6), powerup->x, powerup->y);
+				break;
+			case 1:
+				DrawTexture(GetImage(powerupSheet, powerups_paddle_big00_idx + (int)(powerup->y / 8) % 6), powerup->x, powerup->y);
+				break;
+			case 2:
+				DrawTexture(GetImage(powerupSheet, powerups_paddle_small00_idx + (int)(powerup->y / 8) % 6), powerup->x, powerup->y);
+				break;
+			case 3:
+				DrawTexture(GetImage(powerupSheet, powerups_life00_idx + (int)(powerup->y / 8) % 6), powerup->x, powerup->y);
+				break;
+			case 4:
+				DrawTexture(GetImage(powerupSheet, powerups_multi_ball00_idx + (int)(powerup->y / 8) % 6), powerup->x, powerup->y);
+				break;
+			}
+		}
 	}
 	int Lives() {
 		if (balls.size() == 0) {

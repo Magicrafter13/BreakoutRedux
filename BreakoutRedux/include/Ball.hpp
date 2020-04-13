@@ -9,7 +9,8 @@ public:
 	double speed;
 
 	void Draw() {
-		//DrawTexture(GetImage(spriteSheet, sprites_ball00_idx), x - radius, y - radius);
+		DrawTexture(GetImage(spriteSheet, sprites_ball00_idx), x - radius, y - radius);
+		return;
 		C2D_DrawEllipse(x - radius, y - radius, 0.0, radius * 2.0, radius * 2.0, C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF), C2D_Color32(0xFF, 0x00, 0x00, 0xFF));
 		C2D_DrawEllipse(x - radius + 1.0, y - radius + 1.0, 0.0, radius * 2.0 - 2.0, radius * 2.0 - 2.0, C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF));
 	}
@@ -156,9 +157,10 @@ public:
 		x = sX;
 		y = sY;
 		radius = sRadius;
-		degree = 3150;
+		do
+			degree = (rand() % 1400) + 2000;
+		while (degree > 2650 && degree < 2750);
 		speed = 0;
-		//Update(sBricks, sPaddle); //why would I need this? would do literally nothing since the ball isn't moving lol
 	}
 	void SetDegree(int deg) {
 		degree = deg;
