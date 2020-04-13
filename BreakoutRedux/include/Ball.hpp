@@ -11,9 +11,15 @@ class Ball {
 	std::vector<Brick*> collidingBricks;
 public:
 	double speed;
+	double X() {
+		return x;
+	}
+	double Y() {
+		return y;
+	}
 	void Move() {
-		x += cos((double)degree * (PI / 1800.0)) * (speed / 60.0);
-		y += sin((double)degree * (PI / 1800.0)) * (speed / 60.0);
+		x += cos((double)degree * (PI / 1800.0)) * speed;
+		y += sin((double)degree * (PI / 1800.0)) * speed;
 		range = Range();
 	}
 	void Up(int amount) { //FOR TESTING ONLY
@@ -35,12 +41,12 @@ public:
 		for (Brick* brick : bricks) {
 			if (brick->Exists()) {
 				std::vector<double> tC = brick->Coords();
-				if (!(tC[0] + tC[2] < x - radius - speed / 100.0 || tC[1] + tC[3] < y - radius - speed / 100.0 || tC[0] > x + radius + speed / 100.0 || tC[1] > y + radius + speed / 100.0))
+				if (!(tC[0] + tC[2] < x - radius - speed * 0.6 || tC[1] + tC[3] < y - radius - speed * 0.6 || tC[0] > x + radius + speed * 0.6 || tC[1] > y + radius + speed * 0.6))
 					toCheck.push_back(brick);
 			}
 		}
-		bool checkPaddle = y > 194;
-		for (double distance = 0.1; distance < speed / 100.0 && !collision; distance += 0.2) {
+		bool checkPaddle = y > 201 && y < paddle.Coords()[1] + paddle.Coords()[3] / 2;
+		for (double distance = 0.0; distance < speed * 0.8 - 0.1 && !collision; distance += 0.2) {
 			double drawX = x + dX * distance;
 			double drawY = y + dY * distance;
 			double specialX[] = { drawX + radius, drawX, drawX - radius, drawX };
@@ -62,6 +68,18 @@ public:
 				case 3:
 					angle = 2700;
 					break;
+				case 4:
+					angle = 450;
+					break;
+				case 5:
+					angle = 1350;
+					break;
+				case 6:
+					angle = 2250;
+					break;
+				case 7:
+					angle = 3150;
+					break;
 				default:
 					change++;
 					break;
@@ -70,32 +88,65 @@ public:
 				double tY = step < 4 ? specialY[step] : drawY + sin((double)angle * PI / 1800.0) * radius;
 				if (tX <= 0 || tX >= 400 || tY <= 0) {
 					error = { (angle > 1350 && angle < 2250) || angle < 450 || angle > 3150 ? tX <= 0 ? tX : tX - 400.0 : tX - x, angle > 2250 && angle < 3150 ? tY : y - tY };
+					SetDegree(2 * angle + 1800 - degree);
 					collision = true;
 				}
 				else if (checkPaddle && paddle.Inside(tX, tY)) {
-					//error = paddle.Error(tX, tY);
+					//if ((angle == 0 || angle == 3600 || angle == 1800) && paddle.speed != 0.0)
+					//if (paddle.Coords()[1] < drawY || step < 8)
+					if (paddle.speed != 0.0) {
+						//if (step > 3 && change == 0)
+							//error = paddle.Error(tX, tY);
+						//angle -= (angle + 1800 - degree) / 2;
+						std::vector<double> padCoords = paddle.Coords();
+						std::vector<double> lengths = { (padCoords[0] - drawX) * (padCoords[0] - drawX) + (padCoords[1] - drawY) * (padCoords[1] - drawY),
+							(padCoords[0] + padCoords[2] - drawX) * (padCoords[0] + padCoords[2] - drawX) + (padCoords[1] - drawY) * (padCoords[1] - drawY),
+							radius * radius };
+						if (lengths[0] <= lengths[2])
+							error = { cos((double)angle * PI / 1800.0) * (sqrt(lengths[2]) - sqrt(lengths[0])), sin((double)angle * PI / 1800.0) * (sqrt(lengths[2]) - sqrt(lengths[0])) };
+						else if (lengths[1] <= lengths[2])
+							error = { cos((double)angle * PI / 1800.0) * (sqrt(lengths[2]) - sqrt(lengths[1])), sin((double)angle * PI / 1800.0) * (sqrt(lengths[2]) - sqrt(lengths[1])) };
+						//else
+							//error = paddle.Error(tX, tY);
+						/*double vec[2] = { cos((double)degree * PI / 1800.0) * speed + paddle.speed, sin((double)degree * PI / 1800.0) * speed };
+						speed = sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
+						if (speed < 2)
+							speed = 2.0;
+						degree = atan(vec[1] / vec[0]);*/
+					}
+					//else
+						SetDegree(2 * angle + 1800 - degree);
+					/*if (paddle.speed != 0.0) {
+						if (angle != 900) {
+							std::vector<double> vec = { cos((double)degree * (PI / 1800.0)) * (speed / 60.0) + paddle.speed, sin((double)degree * (PI / 1800.0)) * (speed / 60.0) };
+							//speed = sqrt(vec[0] * vec[0] + vec[1] * vec[1]) * 60.0;
+							//if (speed < 2.0)
+								//speed = 2.0;
+							degree = atan(vec[1] / vec[0]);
+							//angle = degree + 1800;
+							std::vector<double> padCoords = paddle.Coords();
+							std::vector<double> lengths = { (padCoords[0] - drawX) * (padCoords[0] - drawX) + (padCoords[1] - drawY) * (padCoords[1] - drawY), (padCoords[0] + padCoords[2] - drawX) * (padCoords[0] + padCoords[2] - drawX) + (padCoords[1] - drawY) * (padCoords[1] - drawY), radius * radius };
+						}
+					}*/
 					collision = true;
 				}
 				else if (!checkPaddle) {
 					for (Brick* brick : toCheck) {
 						// check if we've already collided
 						if (brick->Inside(tX, tY)) {
-							//std::cout << "0: " << (brick->Inside(drawX + radius, drawY) ? "Y" : "N") << ", 90: " << (brick->Inside(drawX, drawY + radius) ? "Y" : "N") << ", 180: " << (brick->Inside(drawX - radius, drawY) ? "Y" : "N") << ", 270: " << (brick->Inside(drawX, drawY - radius) ? "Y" : "N") << "\n";
 							brick->Hit();
 							//error = brick->Error(tX, tY);
 							//add to collidingBricks
+							SetDegree(2 * angle + 1800 - degree);
 							collision = true;
 							break;
 						}
 					}
 				}
 				if (collision) {
-					int difference = angle - degree;
-					AddDegree(2 * angle + 1800 - degree * 2);
+					//SetDegree(2 * angle + 1800 - degree);
 					x -= error[0];
 					y -= error[1];
-					//std::cout << "Collision at " << angle << ".\n";
-					//if (step < 4) std::cout << "Step " << step << "\n";
 				}
 				if (step < 4)
 					angle = degree;
@@ -103,7 +154,6 @@ public:
 			}
 		}
 		// check if any of the contents of collidingBricks are no longer nearby and if not, remove them
-		//std::cout << degree << "\n";
 		return;
 		/*int tQ = TravelQuadrant();
 		if (slope < 1.0f && slope > -1.0f) {
@@ -201,8 +251,8 @@ public:
 	int GetDegree() {
 		return degree;
 	}
-	void AddDegree(int inc) {
-		degree += inc;
+	void SetDegree(int deg) {
+		degree = deg;
 		if (degree >= 3600) degree -= 3600;
 		if (degree < 0) degree += 3600;
 		slope = Slope();

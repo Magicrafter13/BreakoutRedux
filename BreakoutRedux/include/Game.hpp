@@ -7,13 +7,13 @@
 struct Powerup {
 	double x, y;
 	double width, height;
-	double speed;
 	int type;
 };
 
 class Game {
 	//Player player;
 	std::vector<Brick*> bricks;
+	std::vector<Powerup*> powerups;
 	Paddle *paddle = new Paddle(0.0, 0.0, 0.0, 0.0);
 	std::vector<Ball*> balls;
 	int currentLevelSet, currentLevel;
@@ -35,9 +35,10 @@ public:
 	void Shoot() {
 		for (Ball* ball : balls)
 			if (ball->speed == 0.0)
-				ball->speed = 60.0;
+				ball->speed = 2.0;
 	}
 	void Move() {
+		paddle->Move();
 		for (size_t i = 0; i < balls.size(); i++) {
 			if (balls[i]->Exists()) {
 				balls[i]->Move();
@@ -47,11 +48,49 @@ public:
 				balls.erase(balls.begin() + i);
 		}
 		//set ball trails, unless this is implemented inside the ball class
-		//for each powerup, move add one to its y position
-		//if powerup is off screen, remove it from the arraylist of onscreen powerups
+		std::vector<double> coords = paddle->Coords();
+		for (size_t i = 0; i < powerups.size(); i++) {
+			if (powerups[i]->y < 240) {
+				powerups[i]->y++;
+				if (powerups[i]->y <= coords[1] + coords[3] && powerups[i]->x <= coords[0] + coords[2] && powerups[i]->y + powerups[i]->height >= coords[1] && powerups[i]->x + powerups[i]->width >= coords[0]) {
+					// do something
+					powerups.erase(powerups.begin() + i);
+				}
+			}
+			else
+				powerups.erase(powerups.begin() + i);
+		}
+		for (size_t i = 0; i < bricks.size(); i++) {
+			if (!bricks[i]->Exists()) {
+				// 18 x 7
+				switch (bricks[i]->GetType()) {
+				case 1:
+				case 2:
+				case 6:
+				case 7: {
+					int chance = rand() % 20;
+					if (chance <= 3)
+						powerups.push_back(new Powerup{ bricks[i]->Coords()[0] + bricks[i]->Coords()[2] / 2, bricks[i]->Coords()[1] + bricks[i]->Coords()[3] / 2, 18, 7, rand() % 5 });
+					break;
+				}
+				case 3:
+				case 4:
+				case 5:
+				case 8:
+				case 9:
+				case 10: {
+					int chance = rand() % 4;
+					if (chance == 1)
+						powerups.push_back(new Powerup{ bricks[i]->Coords()[0] + bricks[i]->Coords()[2] / 2, bricks[i]->Coords()[1] + bricks[i]->Coords()[3] / 2, 18, 7, rand() % 5 });
+					break;
+				}
+				}
+				bricks.erase(bricks.begin() + i);
+			}
+		}
 	}
-	void MovePaddle(int amount) {
-		paddle->Move(amount);
+	void MovePaddle(double amount) {
+		paddle->speed = amount;
 	}
 	int Lives() {
 		if (balls.size() == 0) {
@@ -80,7 +119,8 @@ public:
 		//[original code] pp2d_draw_texture_scale(extraBallID[i], (tBall.trail_new_frame_circle[i].x - tBall.trail_new_frame_circle[i].rad) + 1.0, (tBall.trail_new_frame_circle[i].y - tBall.trail_new_frame_circle[i].rad) + 2.0, (7 - i) / 8.0, (7 - i) / 8.0); //RGBA8(0xFF, 0xFF, 0xFF, 32 * (7 - i))
 		for (Ball* ball : balls)
 			ball->Draw();
-		//draw powerups
+		for (Powerup* powerup : powerups)
+			C2D_DrawRectangle(powerup->x, powerup->y, 0, powerup->width, powerup->height, C2D_Color32(0x00, 0xFF, 0x00, 0xFF), C2D_Color32(0x00, 0xFF, 0x00, 0xFF), C2D_Color32(0x00, 0xFF, 0x00, 0xFF), C2D_Color32(0x00, 0xFF, 0x00, 0xFF));
 	}
 	void Reset(int levelSet) {
 		//player = Player();
@@ -88,7 +128,7 @@ public:
 		currentLevelSet = levelSet;
 		currentLevel = 0;
 		LoadLevel();
-		paddle = new Paddle(175.0, 215.0, 50.0, 10.0);
+		paddle = new Paddle(175.0, 215.0, 50.0, 5.0);
 		ResetBalls();
 		/*level = 1; points = 0; last_power = 0;
 		times_power_1 = 0; times_power_2 = 0; times_power_3 = 0;*/

@@ -5,17 +5,21 @@ class Paddle {
 	double width, height;
 	int size;
 public:
+	double speed;
+	std::vector<double> Coords() {
+		return { x, y, width, height };
+	}
 	double CenterX() {
 		return x + width / 2.0;
 	}
 	bool Inside(double tX, double tY) {
 		return !(tX < x || tX > x + width || tY < y || tY > y + height);
 	}
-	void Move(int amount) {
-		x += amount;
+	void Move() {
+		x += speed;
 	}
 	std::vector<double> Error(double tX, double tY) {
-		return std::vector<double> { tX < x + 1.2 ? tX - x : tX > x + width - 1.2 ? tX - x - width : 0.0, tY < y + 1.2 ? tY - y : tY > y + height - 1.2 ? tY - y - height : 0.0 };
+		return std::vector<double> { tX < x + width / 2 ? tX - x : tX - x - width, tY < y + height / 2 ? tY - y : tY - y - height };
 	}
 	void Draw() {
 		C2D_DrawRectangle(x, y, 0.0, width, height, C2D_Color32(0xFF, 0xFF, 0x00, 0xFF), C2D_Color32(0xFF, 0xFF, 0x00, 0xFF), C2D_Color32(0xFF, 0xFF, 0x00, 0xFF), C2D_Color32(0xFF, 0xFF, 0x00, 0xFF));
@@ -42,6 +46,7 @@ public:
 		width = sWidth;
 		height = sHeight;
 		size = 1;
+		speed = 0.0;
 	}
 	Paddle(double sX, double sY, double sWidth, double sHeight) {
 		Reset(sX, sY, sWidth, sHeight);

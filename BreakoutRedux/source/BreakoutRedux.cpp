@@ -45,9 +45,6 @@ int main(int argc, char **argv) {
 	if (!uiSheet || !spriteSheet || !powerupSheet)
 		svcBreak(USERBREAK_PANIC);
 
-	//check if custom level files exist, if not, create them
-	//load custom level files
-
 	//initialize audio (if applicable still)
 
 	srand(time(NULL));
@@ -130,6 +127,7 @@ int main(int argc, char **argv) {
 			if (kDown & KEY_START || (frame % 20 == 19 && CurGame->Lives() == 0)) {
 				GameState = PreviousGameState;
 				PreviousGameState = state_title;
+				UpdateText = true;
 			}
 			if (kDown & KEY_SELECT) // change to A upon release
 				CurGame->Shoot();
@@ -137,13 +135,15 @@ int main(int argc, char **argv) {
 				CurGame->MovePaddle(-3);
 			if (kHeld & KEY_RIGHT)
 				CurGame->MovePaddle(3);
+			if (!(kHeld & (KEY_LEFT | KEY_RIGHT)))
+				CurGame->MovePaddle(0);
 			for (Ball* ball : CurGame->GetBalls()) {
-				if (kDown & KEY_Y) ball->AddDegree(-50);
+				/*if (kDown & KEY_Y) ball->AddDegree(-50);
 				if (kDown & KEY_A) ball->AddDegree(50);
 				if (kDown & KEY_UP) ball->AddDegree(10);
 				if (kDown & KEY_DOWN) ball->AddDegree(-10);
 				if (kHeld & KEY_L) ball->AddDegree(-5);
-				if (kHeld & KEY_R) ball->AddDegree(5);
+				if (kHeld & KEY_R) ball->AddDegree(5);*/
 				if (kDown & KEY_X) ball->Up(5); //these should be temporary
 				if (kDown & KEY_B) ball->Up(-5);
 			}
@@ -256,18 +256,7 @@ int main(int argc, char **argv) {
 
 		if (UpdateText) {
 			switch (GameState) {
-			case state_exit:
-				if (PreviousGameState == state_title)
-					goto case_state_title;
-				if (PreviousGameState == state_game)
-					goto case_state_game;
-				if (PreviousGameState == state_betathanks)
-					goto case_state_betathanks;
-				if (PreviousGameState == state_extra0)
-					goto case_state_extra0;
-				break;
 			case state_title:
-			case_state_title:
 				consoleSelect(&bottomScreen);
 				consoleClear();
 				std::cout << ConsoleColor("0", false);
@@ -281,7 +270,6 @@ int main(int argc, char **argv) {
 				//Create a graphic text class, specifically for the press [button] to start game text to flash every 30 frames it toggles
 				break;
 			case state_game:
-			case_state_game:
 				consoleSelect(&bottomScreen);
 				consoleClear();
 				std::cout << ConsoleColor("0", false);
@@ -291,7 +279,6 @@ int main(int argc, char **argv) {
 				std::cout << /*debug_string +*/ "\n";
 				break;
 			case state_betathanks:
-			case_state_betathanks:
 				consoleSelect(&bottomScreen);
 				consoleClear();
 				std::cout << ConsoleMove(0, 0);
@@ -310,7 +297,6 @@ int main(int argc, char **argv) {
 				std::cout << "       suggestions are welcome!\n";
 				break;
 			case state_extra0:
-			case_state_extra0:
 				consoleSelect(&bottomScreen);
 				consoleClear();
 				std::cout << ConsoleMove(0, 0);
