@@ -10,7 +10,7 @@ C2D_SpriteSheet uiSheet;
 C2D_SpriteSheet spriteSheet;
 C2D_SpriteSheet powerupSheet;
 
-PrintConsole bottomScreen, versionWin, killBox, debugBox;
+PrintConsole bottomScreen, infoKillWindow;
 
 std::string VersionText = " Alpha ", VersionNumber = "02.01.00";
 std::string BuildNumber = "20.04.10.2100", EngineVersion = "01.00.00";
@@ -50,13 +50,9 @@ int main(int argc, char **argv) {
 	srand(time(NULL));
 
 	consoleInit(GFX_BOTTOM, &bottomScreen);
-	consoleInit(GFX_BOTTOM, &versionWin);
-	consoleInit(GFX_BOTTOM, &killBox);
-	consoleInit(GFX_BOTTOM, &debugBox);
+	consoleInit(GFX_BOTTOM, &infoKillWindow);
 
-	consoleSetWindow(&versionWin, 6, 26, 34, 4);
-	consoleSetWindow(&killBox, 0, 28, 40, 2);
-	consoleSetWindow(&debugBox, 18, 4, 9, 12);
+	consoleSetWindow(&infoKillWindow, 0, 26, 40, 4);
 
 	//create paddle and ball objects (create classes for them first)
 
@@ -66,6 +62,7 @@ int main(int argc, char **argv) {
 	//int CurPlayer = 0;
 	Game *CurGame;
 	Game Games[1] = { Game(0) };
+	int lives = 3;
 	int workingLevel[5][10] = {
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -124,7 +121,11 @@ int main(int argc, char **argv) {
 			break;
 		case state_game:
 			// Handle Controls
-			if (kDown & KEY_START || (frame % 20 == 19 && CurGame->Lives() == 0)) {
+			if (frame % 20 == 19) {
+				lives = CurGame->Lives();
+				UpdateText = true;
+			}
+			if (kDown & KEY_START || lives == 0) {
 				GameState = PreviousGameState;
 				PreviousGameState = state_title;
 				UpdateText = true;
@@ -250,12 +251,12 @@ int main(int argc, char **argv) {
 				consoleSelect(&bottomScreen);
 				consoleClear();
 				std::cout << ConsoleColor("0", false);
-				std::cout << ConsoleMove(0, 2) << "Press Select to begin.\n";
+				std::cout << ConsoleMove(0, 2) << "Press Start to begin.\n";
 				std::cout << "Press X to see what I'm working on or have planned.\n";
 				std::cout << "Press Y to open level editor.\n\n";
 				std::cout << "Compatibility Mode: " << (OdsMode ? "On" : "Off") << "\n";
-				std::cout << "(Turn on if not using a 'New' 3DS/2DS)" "\n" "Press R\n";
-				std::cout << "May cause undesireable results on VERY" "\n" "rare occasions.\n";
+				//std::cout << "(Turn on if not using a 'New' 3DS/2DS)" "\n" "Press R\n";
+				//std::cout << "May cause undesireable results on VERY" "\n" "rare occasions.\n";
 
 				//Create a graphic text class, specifically for the press [button] to start game text to flash every 30 frames it toggles
 				break;
@@ -264,8 +265,8 @@ int main(int argc, char **argv) {
 				consoleClear();
 				std::cout << ConsoleColor("0", false);
 				std::cout << ConsoleMove(0, 13);
-				std::cout << "Score: " << "POINTS GO HERE" << "\nLives: " << "LIVES GO HERE" << "\n";
-				std::cout << "Collision being tested " << (OdsMode ? 100 : 300) << "x/frame.\n";
+				std::cout << "Score: " << "POINTS GO HERE" << "\nLives: " << lives << "\n";
+				//std::cout << "Collision being tested " << (OdsMode ? 100 : 300) << "x/frame.\n";
 				std::cout << /*debug_string +*/ "\n";
 				break;
 			case state_betathanks:
@@ -317,19 +318,13 @@ int main(int argc, char **argv) {
 				break;
 			}
 
-			consoleSelect(&killBox);
-			consoleClear();
-			std::cout << ConsoleColor(RedF, RedB, false);
-			for (int i = 0; i < 80; i++)
-				std::cout << " ";
-
-			consoleSelect(&versionWin);
+			consoleSelect(&infoKillWindow);
 			consoleClear();
 			std::cout << ConsoleColor("0", false);
-			std::cout << "     Tap red area any time to exit";
-			std::cout << "Breakout Version: " << ConsoleColor(RedF, false) << VersionText << " " << ConsoleColor(YellowF, false) << VersionNumber;
-			std::cout << ConsoleColor(GreenF, RedB, false) << "              Build: " << BuildNumber;
-			std::cout << ConsoleColor(GreenF, RedB, false) << "   ISHUPE Engine Version: " << EngineVersion;
+			std::cout << "           Tap red area any time to exit";
+			std::cout << "      Breakout Version: " << ConsoleColor(RedF, false) << VersionText << " " << ConsoleColor(YellowF, false) << VersionNumber;
+			std::cout << ConsoleColor(GreenF, RedB, false) << "                    Build: " << BuildNumber;
+			std::cout << ConsoleColor(GreenF, RedB, false) << "         ISHUPE Engine Version: " << EngineVersion;
 			UpdateText = false;
 		}
 
