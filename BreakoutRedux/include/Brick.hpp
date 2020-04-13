@@ -6,24 +6,14 @@ class Brick {
 	int type;
 	int health;
 public:
-	int GetType() {
-		return type;
-	}
-	std::vector<double> Coords() {
-		return std::vector<double>{ x, y, width, height };
-	}
-	bool Inside(double tX, double tY) {
-		return !(tX < x || tX > x + width || tY < y || tY > y + height);
-	}
-	std::vector<double> Error(double tX, double tY) {
-		return std::vector<double> { tX < x + width / 2.0 ? tX - x : tX - x - width, tY < y + height / 2.0 ? tY - y : tY - y - height };
+	double* Coords() {
+		return new double[4]{ x, y, width, height };
 	}
 	void Draw() {
-		C2D_DrawRectangle(x, y, 0.0f, width, height, C2D_Color32(0x00, 0x00, 0xFF, 0xFF), C2D_Color32(0x00, 0x00, 0xFF, 0xFF), C2D_Color32(0x00, 0x00, 0xFF, 0xFF), C2D_Color32(0x00, 0x00, 0xFF, 0xFF));
-		C2D_DrawRectangle(x + 1.0f, y + 1.0f, 0.0f, width - 2.0f, height - 2.0f, C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF));
+		C2D_DrawRectangle(x, y, 0, width, height, C2D_Color32(0x00, 0x00, 0xFF, 0xFF), C2D_Color32(0x00, 0x00, 0xFF, 0xFF), C2D_Color32(0x00, 0x00, 0xFF, 0xFF), C2D_Color32(0x00, 0x00, 0xFF, 0xFF));
+		C2D_DrawRectangle(x + 1, y + 1, 0, width - 2, height - 2, C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF), C2D_Color32(0x95, 0x95, 0x95, 0xFF));
 		return;
 		//above is temp
-		if (type == 0 || health == 0) return;
 		switch (type) {
 		case 1:
 			DrawTexture(GetImage(spriteSheet, sprites_brick01_idx), x, y);
@@ -75,18 +65,29 @@ public:
 			break;
 		}
 	}
+	double* Error(double tX, double tY) {
+		return new double[2]{ tX < x + width / 2.0 ? tX - x : tX - x - width, tY < y + height / 2.0 ? tY - y : tY - y - height };
+	}
 	bool Exists() {
 		return health > 0;
+	}
+	int GetType() {
+		return type;
 	}
 	void Hit() {
 		health--;
 	}
+	bool Inside(double tX, double tY) {
+		return tX >= x && tX <= x + width && tY >= y && tY <= y + height;
+	}
+
 	Brick(double sX, double sY, double sWidth, double sHeight, int sType) {
 		x = sX;
 		y = sY;
 		width = sWidth;
 		height = sHeight;
 		type = sType;
+		// I think I'm gonna change how many "types" there are, and add a 'skin' or 'texture' variable
 		if (type >= 1 && type <= 5)
 			health = 1;
 		else if (type >= 6 && type <= 10)
@@ -96,6 +97,7 @@ public:
 		else
 			health = 0;
 	}
+
 	bool operator==(const Brick& other) {
 		return x == other.x && y == other.y && width == other.width && height == other.height && type == other.type && health == other.health;
 	}

@@ -1,5 +1,4 @@
 #include "BreakoutRedux.hpp"
-#include "Player.hpp"
 #include "Levels.hpp"
 #include "Paddle.hpp"
 #include "Ball.hpp"
@@ -11,10 +10,9 @@ struct Powerup {
 };
 
 class Game {
-	//Player player;
 	std::vector<Brick*> bricks;
 	std::vector<Powerup*> powerups;
-	Paddle *paddle = new Paddle(0.0, 0.0, 0.0, 0.0);
+	Paddle *paddle = new Paddle(0, 0, 0, 0);
 	std::vector<Ball*> balls;
 	int currentLevelSet, currentLevel;
 	int lives;
@@ -26,16 +24,38 @@ class Game {
 	}
 	void ResetBalls() {
 		balls = std::vector<Ball*>();
-		balls.push_back(new Ball(200.0, 200.0, 7.0, bricks, *paddle));
+		balls.push_back(new Ball(200, 200, 7));
 	}
 public:
-	std::vector<Ball*> GetBalls() {
-		return balls;
-	}
-	void Shoot() {
+	void Draw() {
+		for (Brick* brick : bricks)
+			if (brick->Exists())
+				brick->Draw();
+		paddle->Draw();
+		//for each ball, for (int i = 7; i > 0; i--) draw-scaled extra ball[i], end loop, draw ball
+		//[original code] pp2d_draw_texture_scale(extraBallID[i], (tBall.trail_new_frame_circle[i].x - tBall.trail_new_frame_circle[i].rad) + 1.0, (tBall.trail_new_frame_circle[i].y - tBall.trail_new_frame_circle[i].rad) + 2.0, (7 - i) / 8.0, (7 - i) / 8.0); //RGBA8(0xFF, 0xFF, 0xFF, 32 * (7 - i))
 		for (Ball* ball : balls)
-			if (ball->speed == 0.0)
-				ball->speed = 2.0;
+			ball->Draw();
+		for (Powerup* powerup : powerups)
+			C2D_DrawRectangle(powerup->x, powerup->y, 0, powerup->width, powerup->height, C2D_Color32(0x00, 0xFF, 0x00, 0xFF), C2D_Color32(0x00, 0xFF, 0x00, 0xFF), C2D_Color32(0x00, 0xFF, 0x00, 0xFF), C2D_Color32(0x00, 0xFF, 0x00, 0xFF));
+	}
+	int Lives() {
+		if (balls.size() == 0) {
+			lives--;
+			ResetBalls();
+			balls[0]->Update(bricks, *paddle);
+		}
+		bool nextLevel = true;
+		for (Brick* brick : bricks)
+			if (brick->GetType() != 11 && brick->Exists()) // I can probably remove the Exists check
+				nextLevel = false;
+		if (nextLevel) {
+			ResetBalls();
+			balls[0]->Update(bricks, *paddle);
+			currentLevel++;
+			LoadLevel();
+		}
+		return lives;
 	}
 	void Move() {
 		paddle->Move();
@@ -48,7 +68,7 @@ public:
 				balls.erase(balls.begin() + i);
 		}
 		//set ball trails, unless this is implemented inside the ball class
-		std::vector<double> coords = paddle->Coords();
+		double* coords = paddle->Coords();
 		for (size_t i = 0; i < powerups.size(); i++) {
 			if (powerups[i]->y < 240) {
 				powerups[i]->y++;
@@ -62,7 +82,6 @@ public:
 		}
 		for (size_t i = 0; i < bricks.size(); i++) {
 			if (!bricks[i]->Exists()) {
-				// 18 x 7
 				switch (bricks[i]->GetType()) {
 				case 1:
 				case 2:
@@ -92,47 +111,22 @@ public:
 	void MovePaddle(double amount) {
 		paddle->speed = amount;
 	}
-	int Lives() {
-		if (balls.size() == 0) {
-			lives--;
-			ResetBalls();
-			balls[0]->Update(bricks, *paddle);
-		}
-		bool nextLevel = true;
-		for (Brick *brick : bricks)
-			if (brick->GetType() != 11 && brick->Exists())
-				nextLevel = false;
-		if (nextLevel) {
-			ResetBalls();
-			balls[0]->Update(bricks, *paddle);
-			currentLevel++;
-			LoadLevel();
-		}
-		return lives;
-	}
-	void Draw() {
-		for (Brick *brick : bricks)
-			if (brick->Exists())
-				brick->Draw();
-		paddle->Draw();
-		//for each ball, for (int i = 7; i > 0; i--) draw-scaled extra ball[i], end loop, draw ball
-		//[original code] pp2d_draw_texture_scale(extraBallID[i], (tBall.trail_new_frame_circle[i].x - tBall.trail_new_frame_circle[i].rad) + 1.0, (tBall.trail_new_frame_circle[i].y - tBall.trail_new_frame_circle[i].rad) + 2.0, (7 - i) / 8.0, (7 - i) / 8.0); //RGBA8(0xFF, 0xFF, 0xFF, 32 * (7 - i))
-		for (Ball* ball : balls)
-			ball->Draw();
-		for (Powerup* powerup : powerups)
-			C2D_DrawRectangle(powerup->x, powerup->y, 0, powerup->width, powerup->height, C2D_Color32(0x00, 0xFF, 0x00, 0xFF), C2D_Color32(0x00, 0xFF, 0x00, 0xFF), C2D_Color32(0x00, 0xFF, 0x00, 0xFF), C2D_Color32(0x00, 0xFF, 0x00, 0xFF));
-	}
 	void Reset(int levelSet) {
-		//player = Player();
 		lives = 3;
 		currentLevelSet = levelSet;
 		currentLevel = 0;
 		LoadLevel();
-		paddle = new Paddle(175.0, 215.0, 50.0, 5.0);
+		paddle = new Paddle(175, 215, 50, 5);
 		ResetBalls();
 		/*level = 1; points = 0; last_power = 0;
 		times_power_1 = 0; times_power_2 = 0; times_power_3 = 0;*/
 	}
+	void Shoot() {
+		for (Ball* ball : balls)
+			if (ball->speed == 0.0)
+				ball->speed = 2;
+	}
+
 	Game(int levelSet) {
 		Reset(levelSet);
 	}

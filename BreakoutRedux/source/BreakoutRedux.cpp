@@ -62,8 +62,8 @@ int main(int argc, char **argv) {
 
 	int GameState = state_title, PreviousGameState = state_title;
 	bool OdsMode = false;
-	bool UpdateText = true, UpdateTextThanks = false;
-	int CurPlayer = 0;
+	bool UpdateText = true;
+	//int CurPlayer = 0;
 	Game *CurGame;
 	Game Games[1] = { Game(0) };
 	int workingLevel[5][10] = {
@@ -137,16 +137,6 @@ int main(int argc, char **argv) {
 				CurGame->MovePaddle(3);
 			if (!(kHeld & (KEY_LEFT | KEY_RIGHT)))
 				CurGame->MovePaddle(0);
-			for (Ball* ball : CurGame->GetBalls()) {
-				/*if (kDown & KEY_Y) ball->AddDegree(-50);
-				if (kDown & KEY_A) ball->AddDegree(50);
-				if (kDown & KEY_UP) ball->AddDegree(10);
-				if (kDown & KEY_DOWN) ball->AddDegree(-10);
-				if (kHeld & KEY_L) ball->AddDegree(-5);
-				if (kHeld & KEY_R) ball->AddDegree(5);*/
-				if (kDown & KEY_X) ball->Up(5); //these should be temporary
-				if (kDown & KEY_B) ball->Up(-5);
-			}
 			// Run Game Logic
 			CurGame->Move();
 			// Update the Screen

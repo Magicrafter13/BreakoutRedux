@@ -1,6 +1,0 @@
-class Player {
-public:
-	Player() {
-		//
-	}
-};

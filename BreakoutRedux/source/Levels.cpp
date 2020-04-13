@@ -202,14 +202,14 @@ std::vector<std::vector<Brick>> LevelSet[levelsets] = {
 	}
 };
 
-std::vector<Brick>* GetLevel(int levelSet, int level) {
+std::vector<Brick>* GetLevel(size_t levelSet, size_t level) {
 	if (levelSet < levelsets)
 		if (level < LevelSet[levelSet].size())
 			return &LevelSet[levelSet][level];
 	return new std::vector<Brick>();
 }
 
-bool SetLevel(int levelSet, int level, std::vector<Brick> bricks) {
+bool SetLevel(size_t levelSet, size_t level, std::vector<Brick> bricks) {
 	if (levelSet == 0)
 		return false;
 	if (level > LevelSet[levelSet].size())

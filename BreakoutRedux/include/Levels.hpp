@@ -1,5 +1,5 @@
 #include "BreakoutRedux.hpp"
 #include "Brick.hpp"
 
-std::vector<Brick>* GetLevel(int levelSet, int level);
-bool SetLevel(int levelSet, int level, std::vector<Brick> bricks);
+std::vector<Brick>* GetLevel(size_t levelSet, size_t level);
+bool SetLevel(size_t levelSet, size_t level, std::vector<Brick> bricks);
