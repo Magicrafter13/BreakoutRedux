@@ -2,6 +2,7 @@
 
 #define levelsets 2
 
+// TODO: oh my gosh this is the most painful thing to look at please find a better way to do this """efficiently"""
 std::vector<std::vector<Brick>> LevelSet[levelsets] = {
 	std::vector<std::vector<Brick>> {
 		std::vector<Brick> {
@@ -202,7 +203,7 @@ std::vector<std::vector<Brick>> LevelSet[levelsets] = {
 	}
 };
 
-std::vector<Brick>* GetLevel(size_t levelSet, size_t level) {
+std::vector<Brick> *GetLevel(size_t levelSet, size_t level) {
 	if (levelSet < levelsets)
 		if (level < LevelSet[levelSet].size())
 			return &LevelSet[levelSet][level];
